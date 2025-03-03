@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
+body {
+  font-family: 'Noto Sans JP', sans-serif !important;
+}
+
+.logo {
+  font-family: 'Dancing Script', serif;
+  color: #fff;
+  font-size: 26px;
+}
+
+.menu-text {
+  color: #ffffff !important;
+  font-size: 20px;
+}
+
+.custom-color-primary {
+  background-color: #005187 !important;
+}
+
+.custom-button-success {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: #ffffff !important;
+}
+
+.custom-button-info {
+  background-color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+  color: #ffffff !important;
+}
+
+.custom-button-warning {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #ffffff !important;
+}
+
+.custom-button-danger {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+.custom-color-white {
+  background-color: #ffffff !important;
+}
