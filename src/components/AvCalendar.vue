@@ -15,12 +15,17 @@
           :indicators="indicators"
           @change="onDateChange"
         />
+        <div style="text-align: center">
+          <o-button label="Ver todos los arriendos" class="boton" @click="showAllRentals" />
+        </div>
       </div>
     </div>
     <section v-show="dateSelected" class="card card-table">
-      <div>
-        <i class="mdi mdi-close-circle-outline mdi-close-table" @click="closeModal"></i>
-        <h1 class="titulo mb-2">Arriendos del {{ dateSelected }}</h1>
+      <div style="width: 100%">
+        <div class="div-title">
+          <h1 class="titulo">Arriendos del {{ dateSelected }}</h1>
+          <i class="mdi mdi-close-circle-outline mdi-close-table" @click="closeModal(2)"></i>
+        </div>
         <o-table
           :data="isEmpty ? [] : filteredRentals"
           :striped="isStriped"
@@ -64,9 +69,12 @@
         </o-table>
       </div>
     </section>
-    <section class="card card-table">
-      <div>
-        <h1 class="titulo mb-2">Todos los arriendos</h1>
+    <section class="card card-table" v-show="isShowAllRentals">
+      <div style="width: 100%">
+        <div class="div-title">
+          <h1 class="titulo">Todos los arriendos</h1>
+          <i class="mdi mdi-close-circle-outline mdi-close-table" @click="closeModal(3)"></i>
+        </div>
         <o-table
           :data="isEmpty ? [] : rentals"
           :striped="isStriped"
@@ -115,7 +123,7 @@
         <div class="container">
           <i class="mdi mdi-close-circle mdi-main"></i>
           <p class="error-detail">{{ error }}</p>
-          <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal"></i>
+          <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal(1)"></i>
         </div>
       </div>
     </o-modal>
@@ -131,7 +139,8 @@ export default {
       error: null,
       filteredRentals: null,
       matchingRentals: null,
-      dateSelected: null,
+      dateSelected: new Date().toISOString().split('T')[0],
+      isShowAllRentals: false,
       isDetailCardModalActive: false,
       isErrorCardModalActive: false,
       isFullPage: false,
@@ -152,16 +161,11 @@ export default {
   async mounted() {
     try {
       this.isLoading = true
-
       const userId = localStorage.getItem('id')
       const getRentals = await api.get(
         `${import.meta.env.VITE_BACKEND_GET_RENTALS}?userId=${userId}`,
       )
-
       this.rentals = getRentals.data
-
-      console.log(this.rentals)
-
       this.rentalsData = getRentals.data.map((rental) => {
         const transformDate = (dateStr) => {
           if (!dateStr) return null
@@ -177,6 +181,7 @@ export default {
         }
       })
 
+      this.onDateChange(this.dateSelected)
       this.isLoading = false
     } catch (error) {
       this.isErrorCardModalActive = true
@@ -253,7 +258,6 @@ export default {
       }))
       this.dateSelected = selected
       this.isDetailCardModalActive = true
-      console.log('Rentals for date', selected, matchingRentals)
     },
     formatValue(value) {
       // Si el valor es un objeto, lo convierte a un string legible (JSON.stringify)
@@ -273,11 +277,21 @@ export default {
       const day = String(date.getDate()).padStart(2, '0') // Día con dos dígitos
       return `${year}-${month}-${day}`
     },
-    closeModal() {
+    showAllRentals() {
+      this.isShowAllRentals = true
+    },
+    closeModal(option) {
       document.activeElement.blur()
-      this.isErrorCardModalActive = false
-      this.isDetailCardModalActive = false
-      this.dateSelected = null
+      if (option === 1) {
+        this.isErrorCardModalActive = false
+      }
+      if (option === 2) {
+        this.isDetailCardModalActive = false
+        this.dateSelected = null
+      }
+      if (option === 3) {
+        this.isShowAllRentals = false
+      }
     },
   },
   watch: {
@@ -291,8 +305,7 @@ export default {
 <style scoped>
 .titulo {
   font-weight: 500;
-  font-size: 23px;
-  padding-bottom: 12px;
+  font-size: 21px;
   color: #005187;
   text-align: center;
 }
@@ -317,6 +330,23 @@ div.datepicker .datepicker-cell.is-selected {
 }
 .calendario {
   width: auto;
+}
+.div-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 10px;
+}
+.boton {
+  margin-top: 30px;
+  padding: 13px;
+  max-width: 250px;
+  color: white;
+  background-color: #ffb300;
+  font-size: 18px;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
 }
 .notification {
   background-color: hsl(348deg 88.3% 67.24%);
@@ -344,8 +374,8 @@ div.datepicker .datepicker-cell.is-selected {
   font-size: 28px;
   cursor: pointer;
 }
-.mdi-close-table{
-  float: right;
+.mdi-close-table {
+  margin-left: auto;
   color: #ffb300;
   font-size: 28px;
   cursor: pointer;
