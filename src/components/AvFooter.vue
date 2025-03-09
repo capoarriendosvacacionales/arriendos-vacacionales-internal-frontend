@@ -79,7 +79,7 @@ export default {
 }
 .title {
   font-family: 'Noto Sans JP', sans-serif !important;
-  font-size: 27px;
+  font-size: 25px;
   color: #ffcd68;
   margin-top: 15px;
   text-align: center;

@@ -56,14 +56,15 @@ export default {
       isLoading: false,
       isFullPage: false,
       isErrorCardModalActive: false,
-      titleDisclaimer: null
     }
   },
   async beforeMount() {
     try {
       this.isLoading = true
+
       const userId = localStorage.getItem('id')
       const getProfile = await api.get(`${import.meta.env.VITE_BACKEND_GET_PROFILE}?id=${userId}`)
+
       this.firstName = getProfile.data.firstName
       this.lastName = getProfile.data.lastName
       this.birthDate = getProfile.data.birthDate
@@ -84,7 +85,6 @@ export default {
 
         if (this.bankAccount === '' || this.bank === '' || this.typeAccount === '') {
           this.isErrorCardModalActive = true
-          this.titleDisclaimer = 'Error'
           this.error = 'Los campos Banco, Tipo de cuenta y Número de cuenta son obligatorios.'
           this.isLoading = false
           return
@@ -104,7 +104,6 @@ export default {
         this.isLoading = false
       } catch (error) {
         this.isErrorCardModalActive = true
-        this.titleDisclaimer = 'Error'
         this.error = `Error: ${error}`
         this.isLoading = false
       }

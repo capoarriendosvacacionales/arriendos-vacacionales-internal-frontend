@@ -9,6 +9,10 @@
   --bulma-primary: #ffcd68;
 }
 
+.field {
+  display: flex;
+}
+
 body {
   font-family: 'Noto Sans JP', sans-serif !important;
 }
@@ -54,4 +58,10 @@ body {
 
 .custom-color-white {
   background-color: #ffffff !important;
+}
+
+@media screen and (max-width: 768px) {
+  .table-wrapper .table-inner.is-mobile .table {
+    width: 300px;
+  }
 }

@@ -1,20 +1,124 @@
 <template>
   <section>
+    <o-loading v-model:active="isLoading" :full-page="isFullPage">
+      <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
+    </o-loading>
     <div class="card">
-      <p class="titulo">Calendar</p>
-      <o-field>
-        <o-switch v-model="bars" label="Vista en barras" />
-      </o-field>
-
-      <o-datepicker
-        class="calendario"
-        variant="info"
-        v-model="date"
-        inline
-        :events="events"
-        :indicators="indicators"
-      />
+      <div>
+        <h1 class="titulo mb-2">Calendario de arriendos</h1>
+        <o-datepicker
+          class="calendario"
+          variant="info"
+          v-model="selectedDate"
+          inline
+          :events="rentalEvents"
+          :indicators="indicators"
+          @change="onDateChange"
+        />
+      </div>
     </div>
+    <section v-show="dateSelected" class="card card-table">
+      <div>
+        <i class="mdi mdi-close-circle-outline mdi-close-table" @click="closeModal"></i>
+        <h1 class="titulo mb-2">Arriendos del {{ dateSelected }}</h1>
+        <o-table
+          :data="isEmpty ? [] : filteredRentals"
+          :striped="isStriped"
+          :narrowed="isNarrowed"
+          :hoverable="isHoverable"
+          :mobile-cards="hasMobileCards"
+          :paginated="isPaginated"
+          :per-page="perPage"
+        >
+          <o-table-column v-slot="{ row }" field="address" label="Dirección" sortable>
+            {{ row.address }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="municipality" label="Comuna" sortable>
+            {{ row.municipality }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="checkInDate" label="Check In" sortable>
+            {{ row.checkInDate }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="checkOutDate" label="Check Out" sortable>
+            {{ row.checkOutDate }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="firstName" label="Cliente" sortable>
+            {{ row.firstName }} {{ row.lastName }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="email" label="Email" sortable>
+            {{ row.email }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="phone" label="Fono" sortable>
+            {{ row.phone }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="total" label="Total" sortable>
+            {{ row.total }}
+          </o-table-column>
+        </o-table>
+      </div>
+    </section>
+    <section class="card card-table">
+      <div>
+        <h1 class="titulo mb-2">Todos los arriendos</h1>
+        <o-table
+          :data="isEmpty ? [] : rentals"
+          :striped="isStriped"
+          :narrowed="isNarrowed"
+          :hoverable="isHoverable"
+          :mobile-cards="hasMobileCards"
+          :paginated="isPaginated"
+          :per-page="perPage"
+        >
+          <o-table-column v-slot="{ row }" field="address" label="Dirección" sortable>
+            {{ row.address }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="municipality" label="Comuna" sortable>
+            {{ row.municipality }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="checkInDate" label="Check In" sortable>
+            {{ row.checkInDate }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="checkOutDate" label="Check Out" sortable>
+            {{ row.checkOutDate }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="firstName" label="Cliente" sortable>
+            {{ row.firstName }} {{ row.lastName }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="email" label="Email" sortable>
+            {{ row.email }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="phone" label="Fono" sortable>
+            {{ row.phone }}
+          </o-table-column>
+
+          <o-table-column v-slot="{ row }" field="total" label="Total" sortable>
+            {{ row.total }}
+          </o-table-column>
+        </o-table>
+      </div>
+    </section>
+    <o-modal v-model:active="isErrorCardModalActive" :width="330" scroll="clip">
+      <div class="notification">
+        <div class="container">
+          <i class="mdi mdi-close-circle mdi-main"></i>
+          <p class="error-detail">{{ error }}</p>
+          <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal"></i>
+        </div>
+      </div>
+    </o-modal>
   </section>
 </template>
 <script>
@@ -22,41 +126,163 @@ import api from '../api/api'
 export default {
   name: 'AvCalendar',
   data() {
-    const thisMonth = new Date().getMonth();
     return {
+      ok: null,
+      error: null,
+      filteredRentals: null,
+      matchingRentals: null,
+      dateSelected: null,
+      isDetailCardModalActive: false,
+      isErrorCardModalActive: false,
+      isFullPage: false,
+      isLoading: false,
       bars: false,
-      date: new Date(2017, thisMonth, 1),
-      events: [
-        { date: new Date(2017, thisMonth, 2) },
-        { date: new Date(2017, thisMonth, 6) },
-        { date: new Date(2017, thisMonth, 6), type: "info" },
-        { date: new Date(2017, thisMonth, 8), type: "danger" },
-        { date: new Date(2017, thisMonth, 10), type: "success" },
-        { date: new Date(2017, thisMonth, 10), type: "link" },
-        { date: new Date(2017, thisMonth, 12) },
-        { date: new Date(2017, thisMonth, 12), type: "warning" },
-        { date: new Date(2017, thisMonth, 16), type: "danger" },
-        { date: new Date(2017, thisMonth, 20) },
-        { date: new Date(2017, thisMonth, 29), type: "success" },
-        { date: new Date(2017, thisMonth, 29), type: "warning" },
-        { date: new Date(2017, thisMonth, 29), type: "info" },
-        { date: new Date(2017, thisMonth, 29), type: "success" },
-        { date: new Date(2017, thisMonth, 29), type: "warning" },
-        { date: new Date(2017, thisMonth, 29), type: "info" },
-      ],
+      selectedDate: new Date(), // La fecha seleccionada en el datepicker
+      rentalsData: [],
+      rentals: [],
+      isEmpty: false,
+      isStriped: true,
+      isNarrowed: true,
+      isHoverable: true,
+      hasMobileCards: true,
+      isPaginated: true,
+      perPage: 5,
     }
   },
-  async beforeMount() {
+  async mounted() {
     try {
-      const response = await api.get(import.meta.env.VITE_BACKEND_TEST)
-      console.log(response.data)
+      this.isLoading = true
+
+      const userId = localStorage.getItem('id')
+      const getRentals = await api.get(
+        `${import.meta.env.VITE_BACKEND_GET_RENTALS}?userId=${userId}`,
+      )
+
+      this.rentals = getRentals.data
+
+      console.log(this.rentals)
+
+      this.rentalsData = getRentals.data.map((rental) => {
+        const transformDate = (dateStr) => {
+          if (!dateStr) return null
+          const [year, month, day] = dateStr.split('-').map(Number)
+          const formatedDate = new Date(year, month - 1, day)
+          return isNaN(formatedDate.getTime()) ? null : formatedDate
+        }
+
+        return {
+          ...rental,
+          checkInDate: transformDate(rental.checkInDate),
+          checkOutDate: transformDate(rental.checkOutDate),
+        }
+      })
+
+      this.isLoading = false
     } catch (error) {
-      console.error('Error en la petición:', error)
+      this.isErrorCardModalActive = true
+      this.error = error
+      this.isLoading = false
     }
   },
   computed: {
+    rentalEvents() {
+      const events = []
+      this.rentalsData.forEach((rental) => {
+        if (rental.checkInDate && rental.checkOutDate) {
+          const start = new Date(rental.checkInDate)
+          const end = new Date(rental.checkOutDate)
+
+          if (isNaN(start) || isNaN(end)) {
+            console.warn('Fecha inválida encontrada en rental:', rental)
+            return
+          }
+
+          for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+            const current = new Date(d.getTime()) // Crear una copia para evitar mutaciones
+            let eventType = 'info' // Por defecto
+
+            const checkIn = new Date(rental.checkInDate)
+            const checkOut = new Date(rental.checkOutDate)
+
+            if (checkIn.toDateString() === current.toDateString()) {
+              eventType = 'success' // Verde para checkIn
+            } else if (checkOut.toDateString() === current.toDateString()) {
+              eventType = 'danger' // Rojo para checkOut
+            }
+
+            events.push({ date: current, type: eventType })
+          }
+        } else if (rental.checkInDate) {
+          const checkIn = new Date(rental.checkInDate)
+          if (!isNaN(checkIn)) {
+            events.push({ date: checkIn, type: 'success' })
+          }
+        }
+      })
+      return events
+    },
     indicators() {
-      return this.bars ? "bars" : "dots";
+      return 'bars'
+    },
+  },
+  methods: {
+    onDateChange(selectedDate) {
+      // Convierte la fecha seleccionada a una cadena ISO (YYYY-MM-DD)
+      const selected = new Date(selectedDate).toISOString().slice(0, 10)
+      // Filtra rentalsData para obtener los rentals cuyo rango incluya la fecha seleccionada
+      const matchingRentals = this.rentalsData.filter((rental) => {
+        if (rental.checkInDate && rental.checkOutDate) {
+          const checkIn = new Date(rental.checkInDate).toISOString().slice(0, 10)
+          const checkOut = new Date(rental.checkOutDate).toISOString().slice(0, 10)
+          return selected >= checkIn && selected <= checkOut
+        }
+        return false
+      })
+
+      // Filtrar los registros para mostrar solo las propiedades necesarias
+      this.filteredRentals = matchingRentals.map((rental) => ({
+        address: rental.address,
+        municipality: rental.municipality,
+        checkInDate: this.formatDate(rental.checkInDate),
+        checkOutDate: this.formatDate(rental.checkOutDate),
+        firstName: rental.firstName,
+        lastName: rental.lastName,
+        email: rental.email,
+        phone: rental.phone,
+        total: rental.total,
+      }))
+      this.dateSelected = selected
+      this.isDetailCardModalActive = true
+      console.log('Rentals for date', selected, matchingRentals)
+    },
+    formatValue(value) {
+      // Si el valor es un objeto, lo convierte a un string legible (JSON.stringify)
+      if (typeof value === 'object' && value !== null) {
+        // Si es una fecha, mostrar como fecha
+        if (value._seconds) {
+          const date = new Date(value._seconds * 1000)
+          return date.toISOString()
+        }
+        return JSON.stringify(value, null, 2) // Convertir objeto en formato JSON
+      }
+      return value // Para valores simples, solo devolver el valor
+    },
+    formatDate(date) {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0') // Mes con dos dígitos
+      const day = String(date.getDate()).padStart(2, '0') // Día con dos dígitos
+      return `${year}-${month}-${day}`
+    },
+    closeModal() {
+      document.activeElement.blur()
+      this.isErrorCardModalActive = false
+      this.isDetailCardModalActive = false
+      this.dateSelected = null
+    },
+  },
+  watch: {
+    selectedDate(newDate) {
+      this.onDateChange(newDate)
     },
   },
 }
@@ -71,6 +297,9 @@ export default {
   text-align: center;
 }
 .card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 180px auto 0;
   padding: 30px;
   border-radius: 30px;
@@ -79,7 +308,54 @@ export default {
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
 }
+.card-table {
+  margin-top: 45px;
+  margin-bottom: 40px;
+}
 div.datepicker .datepicker-cell.is-selected {
   background-color: #ffb300 !important;
+}
+.calendario {
+  width: auto;
+}
+.notification {
+  background-color: hsl(348deg 88.3% 67.24%);
+  padding: 5px 14px 0 0;
+  border-radius: 30px;
+  text-align: center;
+}
+.mdi-main {
+  margin: auto 0;
+  padding-left: 25px;
+  font-size: 50px;
+  color: #fff;
+}
+.container {
+  display: flex;
+}
+.error-detail {
+  color: #fff;
+  margin: 20px 15px 25px 20px;
+  text-align: justify;
+}
+.mdi-close {
+  float: right;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+}
+.mdi-close-table{
+  float: right;
+  color: #ffb300;
+  font-size: 28px;
+  cursor: pointer;
+}
+.field {
+  display: flex !important;
+}
+@media (min-width: 769px) {
+  .card-table {
+    max-width: calc(1000px - 60px) !important;
+  }
 }
 </style>
