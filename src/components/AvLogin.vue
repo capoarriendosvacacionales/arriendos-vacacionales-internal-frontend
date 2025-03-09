@@ -49,8 +49,12 @@ export default {
           username: this.username,
           password: this.password,
         });
+        const idUser = response.data.id;
+        const username = response.data.username;
         const token = response.data.access_token;
         localStorage.setItem('access_token', token);
+        localStorage.setItem('user', username);
+        localStorage.setItem('id', idUser);
         this.$router.push({ name: 'calendar' });
       } catch (error) {
         console.error('Error en login:', error);

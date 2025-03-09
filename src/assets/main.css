@@ -2,6 +2,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
 
+:root {
+  /* Sobrescribe la variable para el color primario */
+  --oruga-ui-primary: #ffcd68;
+  /* Si Bulma define alguna variable similar, también puedes sobrescribirla */
+  --bulma-primary: #ffcd68;
+}
+
 body {
   font-family: 'Noto Sans JP', sans-serif !important;
 }

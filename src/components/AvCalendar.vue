@@ -3,7 +3,7 @@
     <div class="card">
       <p class="titulo">Calendar</p>
       <o-field>
-        <o-switch v-model="bars" label="Bars" />
+        <o-switch v-model="bars" label="Vista en barras" />
       </o-field>
 
       <o-datepicker

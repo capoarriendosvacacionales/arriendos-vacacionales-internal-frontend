@@ -15,7 +15,7 @@
       </div>
       <a
         role="button"
-        class="navbar-burger custom-color-white mb-5"
+        class="navbar-burger custom-color-transparent mb-5"
         aria-label="menu"
         aria-expanded="true"
         @click="openAndCloseBurger"
@@ -28,9 +28,9 @@
     </div>
 
     <div class="navbar-center is-hidden-touch">
-      <a class="navbar-item menu-text" href="/">Calendario</a>
-      <a class="navbar-item menu-text" href="/profile">Perfil</a>
-      <a class="navbar-item menu-text" href="properties">Propiedades</a>
+      <a class="navbar-item menu-text" href="/">Mi calendario</a>
+      <a class="navbar-item menu-text" href="properties">Mis propiedades</a>
+      <a class="navbar-item menu-text" href="/profile">Mi perfil</a>
     </div>
   </nav>
 </template>
@@ -60,7 +60,7 @@ export default {
 .navbar.is-fixed-bottom,
 .navbar.is-fixed-top {
   box-shadow: 0px 1px 20px 1px rgba(10, 10, 10, 0.1);
-  min-height: 100px;
+  min-height: 105px;
   margin: 0 auto;
   top: 30px;
   border-radius: 25px;
@@ -136,7 +136,7 @@ img {
 @media (min-width: 1024px) {
   .navbar.is-fixed-bottom,
   .navbar.is-fixed-top {
-    max-width: 600px;
+    max-width: 750px;
   }
 }
 </style>

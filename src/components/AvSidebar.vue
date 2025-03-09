@@ -3,21 +3,36 @@
     <div class="sidebar-layout">
       <o-sidebar :mobile="mobile" :expand-on-hover="expandOnHover" :reduce="reduce" active>
         <section class="menu-sidebar">
-          <a class="navbar-item menu-text" href="/">Calendario</a>
-          <a class="navbar-item menu-text" href="profile">Perfil</a>
-          <a class="navbar-item menu-text" href="properties">Propiedades</a>
+          <a class="navbar-item menu-text" href="profile">Mi perfil</a>
+          <a class="navbar-item menu-text" href="/">Mi calendario</a>
+          <a class="navbar-item menu-text" href="properties">Mis propiedades</a>
         </section>
       </o-sidebar>
     </div>
   </section>
 </template>
 
-<script></script>
+<script>
+export default {
+  props: {
+    mobile: {
+      type: String,
+      default: null,
+    },
+  },
+  data() {
+    return {
+      expandOnHover: false,
+      reduce: false
+    }
+  }
+}
+</script>
 
 <style scope>
 .oruga-sidebar {
   position: fixed; /* Fija la sidebar a la pantalla */
-  top: 105px; /* Margen superior de 90px */
+  top: 111px; /* Margen superior de 90px */
   left: 50%; /* Posiciona el lado izquierdo al 50% de la pantalla */
   transform: translateX(-50%); /* Centra la sidebar ajustando hacia la izquierda */
   height: 180px; /* Altura total menos el margen superior */
@@ -32,6 +47,7 @@
 .menu-sidebar {
   padding-top: 1em;
   text-align: center;
+  background-color: transparent !important;
 }
 .menu-text {
   color: #ffcd68;
