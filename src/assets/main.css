@@ -60,8 +60,20 @@ body {
   background-color: #ffffff !important;
 }
 
+.checkbox {
+  margin: 0;
+  padding: 0;
+}
+
+.check-box {
+  margin: 1px 0 0 10px;
+}
+
 @media screen and (max-width: 768px) {
   .table-wrapper .table-inner.is-mobile .table {
-    width: 300px;
+    width: 100%;
+  }
+  td {
+    width: 360px;
   }
 }

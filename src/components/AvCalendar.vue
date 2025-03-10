@@ -135,7 +135,6 @@ export default {
   name: 'AvCalendar',
   data() {
     return {
-      ok: null,
       error: null,
       filteredRentals: null,
       matchingRentals: null,
@@ -158,7 +157,7 @@ export default {
       perPage: 5,
     }
   },
-  async mounted() {
+  async beforeMount() {
     try {
       this.isLoading = true
       const userId = localStorage.getItem('id')

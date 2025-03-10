@@ -16,16 +16,16 @@
         <input class="input mb-3" type="text" v-model="birthDate" disabled />
         <p class="mb-1">Banco<span v-show="!bank && email"> Campo obligatorio!</span></p>
         <input class="input mb-3" type="text" v-model="bank" />
-        <p class="mb-1">Nº de cuenta<span v-show="!bankAccount && email"> Campo obligatorio!</span></p>
+        <p class="mb-1">
+          Nº de cuenta<span v-show="!bankAccount && email"> Campo obligatorio!</span>
+        </p>
         <input class="input mb-3" type="text" v-model="bankAccount" />
-        <p class="mb-1">Tipo de cuenta<span v-show="!typeAccount && email"> Campo obligatorio!</span></p>
+        <p class="mb-1">
+          Tipo de cuenta<span v-show="!typeAccount && email"> Campo obligatorio!</span>
+        </p>
         <input class="input mb-3" type="text" v-model="typeAccount" />
         <o-button label="Guardar" class="boton" @click="saveProfile()" />
-        <o-modal
-          v-model:active="isErrorCardModalActive"
-          :width="330"
-          scroll="clip"
-        >
+        <o-modal v-model:active="isErrorCardModalActive" :width="330" scroll="clip">
           <div class="notification">
             <div class="container">
               <i class="mdi mdi-close-circle mdi-main"></i>
@@ -110,7 +110,7 @@ export default {
     },
     closeModal() {
       this.isErrorCardModalActive = false
-    }
+    },
   },
 }
 </script>
@@ -182,6 +182,11 @@ span {
 @media (min-width: 320px) and (max-width: 523px) {
   .card {
     margin: 160px 10% 0 10%;
+  }
+}
+@media (min-width: 769px) {
+  .table-wrapper .table-inner.is-mobile td {
+    width: 360px !important;
   }
 }
 </style>
