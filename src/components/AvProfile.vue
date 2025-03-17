@@ -25,12 +25,18 @@
         </p>
         <input class="input mb-3" type="text" v-model="typeAccount" />
         <o-button label="Guardar" class="boton" @click="saveProfile()" />
-        <o-modal v-model:active="isErrorCardModalActive" :width="330" scroll="clip">
-          <div class="notification">
+        <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
+          <div
+            class="notification"
+            :style="{
+              'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)',
+            }"
+          >
             <div class="container">
-              <i class="mdi mdi-close-circle mdi-main"></i>
-              <p class="error-detail">{{ error }}</p>
-              <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal"></i>
+              <i v-show="error" class="mdi mdi-close-circle mdi-main"></i>
+              <i v-show="!error" class="mdi mdi-checkbox-marked-circle mdi-main"></i>
+              <p class="notification-detail">{{ error ? error : ok }}</p>
+              <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
             </div>
           </div>
         </o-modal>
@@ -55,7 +61,7 @@ export default {
       ok: null,
       isLoading: false,
       isFullPage: false,
-      isErrorCardModalActive: false,
+      isCardModalActive: false,
     }
   },
   async beforeMount() {
@@ -74,8 +80,9 @@ export default {
       this.typeAccount = getProfile.data.typeAccount
       this.isLoading = false
     } catch (error) {
+      this.isCardModalActive = true
+      this.error = error
       this.isLoading = false
-      console.error('Error en la petición:', error)
     }
   },
   methods: {
@@ -84,7 +91,7 @@ export default {
         this.isLoading = true
 
         if (this.bankAccount === '' || this.bank === '' || this.typeAccount === '') {
-          this.isErrorCardModalActive = true
+          this.isCardModalActive = true
           this.error = 'Los campos Banco, Tipo de cuenta y Número de cuenta son obligatorios.'
           this.isLoading = false
           return
@@ -99,17 +106,18 @@ export default {
         }
         const updateProfile = await api.patch(`${import.meta.env.VITE_BACKEND_PATCH_PROFILE}`, body)
         if (updateProfile.data.id) {
-          this.ok = 'Los datos fueron actualizados!'
+          this.ok = 'Perfil actualizado!'
         }
         this.isLoading = false
+        this.isCardModalActive = true
       } catch (error) {
-        this.isErrorCardModalActive = true
-        this.error = `Error: ${error}`
+        this.isCardModalActive = true
+        this.error = error
         this.isLoading = false
       }
     },
     closeModal() {
-      this.isErrorCardModalActive = false
+      this.isCardModalActive = false
     },
   },
 }
@@ -154,8 +162,8 @@ span {
   float: right;
 }
 .notification {
-  background-color: hsl(348deg 88.3% 67.24%);
-  padding: 5px 14px 0 0;
+  padding: 0;
+  padding-bottom: 3px;
   border-radius: 30px;
   text-align: center;
 }
@@ -167,14 +175,21 @@ span {
 }
 .container {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 }
-.error-detail {
+.notification-detail {
   color: #fff;
   margin: 20px 15px 25px 20px;
-  text-align: justify;
+  flex-grow: 1;
+  text-align: center;
 }
 .mdi-close {
   float: right;
+  position: relative;
+  top: -13px;
+  padding-right: 14px;
   color: #fff;
   font-size: 28px;
   cursor: pointer;
