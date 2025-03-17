@@ -449,10 +449,9 @@ export default {
 
         // TODO: Actualizar la propiedad con las URLs de las fotos en la propiedad 'image'. Falta construir método en el backend para poder recibir la llamada de búsqueda
         const updatedListImages = await api.patch(
-          `${import.meta.env.VITE_BACKEND_PATCH_IMAGES}`,
+          `${import.meta.env.VITE_BACKEND_PATCH_ADD_IMAGES}`,
           imageBody,
         )
-        // http://localhost:3000/gcs/get-images?userId=U924FRuLVJU6QFIhLcjs&propertyId=leQUtF8EkzCACSMiqHeQ
 
         if (!updatedListImages) {
           throw new Error('Fotos no listadas!')
@@ -506,12 +505,9 @@ export default {
         }
         reader.readAsDataURL(file)
       })
-
-      console.log(this.previewFiles)
     },
     removeImage(index) {
       this.previewFiles.splice(index, 1)
-      console.log(this.previewFiles)
     },
     closeModal() {
       this.isCardModalActive = false
