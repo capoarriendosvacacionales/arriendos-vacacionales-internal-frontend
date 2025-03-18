@@ -389,10 +389,10 @@ export default {
           this.country === '' ||
           this.description === '' ||
           this.politics === '' ||
-          this.price === '' ||
-          this.capacity === '' ||
-          this.rooms === '' ||
-          this.parking === ''
+          this.price === null ||
+          this.capacity === null ||
+          this.rooms === null ||
+          this.parking === null
         ) {
           this.isCardModalActive = true
           this.error =
@@ -447,7 +447,6 @@ export default {
           codeProperty: addProperty.data,
         }
 
-        // TODO: Actualizar la propiedad con las URLs de las fotos en la propiedad 'image'. Falta construir método en el backend para poder recibir la llamada de búsqueda
         const updatedListImages = await api.patch(
           `${import.meta.env.VITE_BACKEND_PATCH_ADD_IMAGES}`,
           imageBody,
@@ -458,6 +457,27 @@ export default {
         }
 
         this.openOrCloseAddProperty(!this.openOrClose)
+
+        this.previewFiles = []
+        this.address = null
+        this.municipality = null
+        this.resortTown = null
+        this.region = null
+        this.country = null
+        this.description = null
+        this.politics = null
+        this.price = null
+        this.capacity = null
+        this.rooms = null
+        this.parking = null
+        this.internet = false
+        this.airConditioning = false
+        this.calefaction = false
+        this.whirlpool = false
+        this.pool = false
+        this.tinaja = false
+        this.beach = false
+        this.petsAllow = false
         this.isLoading = false
         this.ok = 'La propiedad fue creada!'
         this.isCardModalActive = true
