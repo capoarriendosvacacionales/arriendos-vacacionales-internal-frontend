@@ -105,7 +105,7 @@
     <section class="card card-table mb-6">
       <div style="width: 100%">
         <div class="div-title">
-          <h1 class="titulo mb-2">Mis propiedades</h1>
+          <h1 class="titulo mb-2 mt-3">Mis propiedades</h1>
         </div>
         <o-table
           :data="isEmpty ? [] : myProperties"
@@ -120,95 +120,211 @@
           row-key="codeProperty"
           detailed
         >
-          <o-table-column v-slot="{ row }" field="codeProperty" label="Código" sortable>
+          <o-table-column
+            v-slot="{ row }"
+            field="codeProperty"
+            label="Código"
+            sortable
+            style="width: 200px !important"
+          >
             {{ row.codeProperty }}
           </o-table-column>
 
-          <o-table-column v-slot="{ row }" field="address" label="Dirección" sortable>
+          <o-table-column
+            v-slot="{ row }"
+            field="address"
+            label="Dirección"
+            sortable
+            style="width: 200px !important"
+          >
             {{ row.address }}
           </o-table-column>
 
-          <o-table-column v-slot="{ row }" field="municipality" label="Comuna" sortable>
+          <o-table-column
+            v-slot="{ row }"
+            field="municipality"
+            label="Comuna"
+            sortable
+            style="width: 200px !important"
+          >
             {{ row.municipality }}
           </o-table-column>
 
-          <o-table-column v-slot="{ row }" field="resortTown" label="Ciudad" sortable>
+          <o-table-column
+            v-slot="{ row }"
+            field="resortTown"
+            label="Ciudad"
+            sortable
+            style="width: 200px !important"
+          >
             {{ row.resortTown }}
           </o-table-column>
 
-          <o-table-column v-slot="{ row }" field="region" label="Región" sortable>
+          <o-table-column
+            v-slot="{ row }"
+            field="region"
+            label="Región"
+            sortable
+            style="width: 200px !important"
+          >
             {{ row.region }}
           </o-table-column>
 
-          <o-table-column v-slot="{ row }" field="country" label="País" sortable>
+          <o-table-column
+            v-slot="{ row }"
+            field="country"
+            label="País"
+            sortable
+            style="width: 200px !important"
+          >
             {{ row.country }}
           </o-table-column>
 
           <template #detail="{ row }">
-            <p class="mt-2 mb-1 ml-1">Descripción</p>
-            <input class="input" type="text" v-model="row.description" />
-            <p class="mt-2 mb-1 ml-1">Políticas</p>
-            <input class="input" type="text" v-model="row.politics" />
-            <p class="mt-2 mb-1 ml-1">Precio</p>
-            <input class="input" type="text" v-model="row.price" />
-            <p class="mt-2 mb-1 ml-1">Capacidad</p>
-            <input class="input" type="number" v-model="row.capacity" />
-            <p class="mt-2 mb-1 ml-1">Habitaciones</p>
-            <input class="input" type="number" v-model="row.rooms" />
-            <p class="mt-2 mb-1 ml-1">Estacionamientos</p>
-            <input class="input" type="number" v-model="row.parking" />
-            <table class="amenities-table">
-              <tbody>
-                <tr class="">
-                  <td class="td-table mt-3 pt-3">Internet</td>
-                  <td><o-checkbox v-model="row.internet" /></td>
-                </tr>
-                <tr>
-                  <td class="td-table pt-3">Aire acondicionado</td>
-                  <td><o-checkbox v-model="row.airConditioning" /></td>
-                </tr>
-                <tr>
-                  <td class="td-table pt-3">Calefacción</td>
-                  <td><o-checkbox v-model="row.calefaction" /></td>
-                </tr>
-                <tr>
-                  <td class="td-table pt-3">Tina de hidromasaje</td>
-                  <td><o-checkbox v-model="row.whirlpool" /></td>
-                </tr>
-                <tr>
-                  <td class="td-table pt-3">Piscina</td>
-                  <td><o-checkbox v-model="row.pool" /></td>
-                </tr>
-                <tr>
-                  <td class="td-table pt-3">Tinaja</td>
-                  <td><o-checkbox v-model="row.tinaja" /></td>
-                </tr>
-                <tr>
-                  <td class="td-table pt-3">Playa</td>
-                  <td><o-checkbox v-model="row.beach" /></td>
-                </tr>
-                <tr>
-                  <td class="td-table pt-3">Permite mascotas</td>
-                  <td><o-checkbox v-model="row.petsAllow" /></td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="botones">
-              <o-button class="guardar" @click="saveProperty(userId, row)">Guardar</o-button>
-              <o-button class="eliminar" @click="deleteProperty(userId, row.codeProperty, owner)"
-                >Eliminar</o-button
-              >
-              <o-button
-                class="despublicar"
-                :style="{
-                  'background-color': row.isPublicationDisabled ? '#209d12c9' : '#3f3f3fc9',
-                }"
-                @click="
-                  publishOrUnpublishProperty(userId, row.codeProperty, !row.isPublicationDisabled)
-                "
-                >{{ row.isPublicationDisabled ? 'Publicar' : 'Despublicar' }}</o-button
-              >
-            </div>
+            <td class="divisor">
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Descripción</p>
+              </div>
+              <input class="input" type="text" v-model="row.description" />
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Políticas</p>
+              </div>
+              <input class="input" type="text" v-model="row.politics" />
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Precio</p>
+              </div>
+              <input class="input" type="text" v-model="row.price" />
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Capacidad</p>
+              </div>
+              <input class="input" type="number" v-model="row.capacity" />
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Habitaciones</p>
+              </div>
+              <input class="input" type="number" v-model="row.rooms" />
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Estacionamientos</p>
+              </div>
+              <input class="input" type="number" v-model="row.parking" />
+              <table class="amenities-table">
+                <tbody>
+                  <tr class="">
+                    <td class="td-table mt-3 pt-3">Internet</td>
+                    <td><o-checkbox v-model="row.internet" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Aire acondicionado</td>
+                    <td><o-checkbox v-model="row.airConditioning" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Calefacción</td>
+                    <td><o-checkbox v-model="row.calefaction" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Tina de hidromasaje</td>
+                    <td><o-checkbox v-model="row.whirlpool" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Piscina</td>
+                    <td><o-checkbox v-model="row.pool" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Tinaja</td>
+                    <td><o-checkbox v-model="row.tinaja" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Playa</td>
+                    <td><o-checkbox v-model="row.beach" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Permite mascotas</td>
+                    <td><o-checkbox v-model="row.petsAllow" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+            <section class="borde">
+              <div class="contenedor-subtitulo">
+                <div class="titulo-photos">
+                  <h1 class="title-photos">Eliminar fotos</h1>
+                  <i
+                    v-show="!openOrCloseDelImages"
+                    class="mdi mdi-plus-circle mdi-36px"
+                    @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
+                  ></i>
+                  <i
+                    v-show="openOrCloseDelImages"
+                    class="mdi mdi-minus-circle mdi-36px"
+                    @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
+                  ></i>
+                </div>
+              </div>
+              <div v-show="openOrCloseDelImages" class="image-container">
+                <div v-for="(file, index) in row.image" :key="index" class="preview-photos">
+                  <img :src="file" alt="Vista previa de la imagen" class="preview-img2" />
+                  <button @click="removeImage(index)" class="boton-vistaprevia2">Eliminar</button>
+                </div>
+              </div>
+            </section>
+            <section class="borde">
+              <div class="contenedor-subtitulo">
+                <div class="titulo-photos">
+                  <h1 class="title-photos">Agregar fotos</h1>
+                  <i
+                    v-show="!openOrCloseAImages"
+                    class="mdi mdi-plus-circle mdi-36px"
+                    @click="openOrCloseAddImages(!openOrCloseAImages)"
+                  ></i>
+                  <i
+                    v-show="openOrCloseAImages"
+                    class="mdi mdi-minus-circle mdi-36px"
+                    @click="openOrCloseAddImages(!openOrCloseAImages)"
+                  ></i>
+                </div>
+              </div>
+              <div v-show="openOrCloseAImages" class="image-container2">
+                <section class="upload-photo">
+                  <o-field>
+                    <o-upload class="upload" multiple @change="handleFileUploadToModify">
+                      <div style="text-align: center">
+                        <p>
+                          <o-icon icon="upload" size="is-large" />
+                        </p>
+                        <p>Haz click aquí para subir tus fotos</p>
+                      </div>
+                    </o-upload>
+                  </o-field>
+                </section>
+              </div>
+              <section v-show="openOrCloseAImages" class="previews pb-6">
+                <div
+                  v-for="(file, index) in previewFilesToModify"
+                  :key="index"
+                  class="preview-container"
+                >
+                  <img :src="file.url" alt="Vista previa de la imagen" class="preview-img" />
+                  <button @click="removeImageToModify(index)" class="boton-vistaprevia">X</button>
+                </div>
+              </section>
+            </section>
+            <section>
+              <div class="botones">
+                <o-button class="guardar" @click="saveProperty(userId, row)">Guardar</o-button>
+                <o-button class="eliminar" @click="deleteProperty(userId, row.codeProperty, owner)"
+                  >Eliminar</o-button
+                >
+                <o-button
+                  class="despublicar"
+                  :style="{
+                    'background-color': row.isPublicationDisabled ? '#209d12c9' : '#3f3f3fc9',
+                  }"
+                  @click="
+                    publishOrUnpublishProperty(userId, row.codeProperty, !row.isPublicationDisabled)
+                  "
+                  >{{ row.isPublicationDisabled ? 'Publicar' : 'Despublicar' }}</o-button
+                >
+              </div>
+            </section>
           </template>
         </o-table>
         <o-loading v-model:active="isLoading" :full-page="isFullPage">
@@ -260,7 +376,10 @@ export default {
       perPage: 5,
       owner: null,
       openOrClose: false,
+      openOrCloseDelImages: false,
+      openOrCloseAImages: false, // Para agregar nuevas fotos
       previewFiles: [],
+      previewFilesToModify: [],
       address: null,
       municipality: null,
       resortTown: null,
@@ -514,6 +633,12 @@ export default {
     openOrCloseAddProperty(trueOrFalse) {
       this.openOrClose = trueOrFalse
     },
+    openOrCloseDeleteImages(trueOrFalse) {
+      this.openOrCloseDelImages = trueOrFalse
+    },
+    openOrCloseAddImages(trueOrFalse) {
+      this.openOrCloseAImages = trueOrFalse
+    },
     handleFileUpload(event) {
       const files = event.target.files || event.dataTransfer.files
       if (!files.length) return
@@ -526,8 +651,23 @@ export default {
         reader.readAsDataURL(file)
       })
     },
+    handleFileUploadToModify(event) {
+      const files = event.target.files || event.dataTransfer.files
+      if (!files.length) return
+
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          this.previewFilesToModify.push({ file, url: e.target.result })
+        }
+        reader.readAsDataURL(file)
+      })
+    },
     removeImage(index) {
       this.previewFiles.splice(index, 1)
+    },
+    removeImageToModify(index) {
+      this.previewFilesToModify.splice(index, 1)
     },
     closeModal() {
       this.isCardModalActive = false
@@ -544,15 +684,33 @@ export default {
   text-align: center;
   flex-grow: 1; /* Hace que el título ocupe todo el espacio posible */
 }
+.title-photos {
+  font-weight: 500;
+  font-size: 21px;
+  color: #005187;
+  text-align: center;
+  flex-grow: 1; /* Hace que el título ocupe todo el espacio posible */
+}
 .titulo-add {
   display: flex;
   align-items: center;
   column-gap: 10px;
 }
-.asdasdasd {
+.contenedor-subtitulo {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.borde {
+  border-bottom: 1px solid rgb(221, 221, 221);
+}
+.titulo-photos {
+  display: flex;
   align-items: center;
+  column-gap: 10px;
+  text-align: center;
 }
 .mdi-plus-circle,
 .mdi-minus-circle {
@@ -645,7 +803,6 @@ export default {
   align-items: center;
 }
 .guardar {
-  margin-top: 7px;
   margin-left: 0px;
   color: white;
   background-color: #b116febe;
@@ -712,7 +869,6 @@ export default {
   height: 100%;
   object-fit: cover;
 }
-
 .boton-vistaprevia {
   position: absolute;
   top: 8px;
@@ -731,7 +887,70 @@ export default {
     0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
-@media (min-width: 320px) and (max-width: 413px) {
+.image-container {
+  display: flex;
+  flex-wrap: wrap; /* Permite que las imágenes se acomoden en varias filas si es necesario */
+  justify-content: center; /* Centra las imágenes horizontalmente */
+  row-gap: 30px; /* Espaciado entre los elementos */
+  column-gap: 30px;
+  margin-bottom: 35px;
+}
+.image-container2 {
+  display: flex;
+  flex-wrap: wrap; /* Permite que las imágenes se acomoden en varias filas si es necesario */
+  justify-content: center; /* Centra las imágenes horizontalmente */
+  row-gap: 30px; /* Espaciado entre los elementos */
+  column-gap: 30px;
+}
+.preview-photos {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra las imágenes y botones en cada contenedor */
+  justify-content: center;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
+.preview-img2 {
+  width: 320px;
+  height: 240px;
+  object-fit: cover; /* Asegura que la imagen se recorte adecuadamente */
+}
+.boton-vistaprevia2 {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgb(255, 64, 0);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 40px;
+  width: 85px;
+  height: 25px;
+  font-size: 14px;
+  font-weight: bolder;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.divisor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 320px) and (max-width: 358px) {
+  .botones {
+    padding-right: 10px;
+  }
+  .card {
+    padding: 3px;
+  }
   .previews {
     margin: 0 auto;
     width: 320px;
@@ -742,7 +961,51 @@ export default {
   }
   .botones {
     flex-wrap: wrap;
+    column-gap: 20px;
+    row-gap: 20px;
+    width: 100% !important;
+    padding-right: 0;
+    margin-left: 0px;
     justify-content: center;
+  }
+  .guardar,
+  .eliminar,
+  .despublicar {
+    font-size: 16px;
+  }
+  .despublicar {
+    width: 120px;
+  }
+}
+
+@media (min-width: 359px) and (max-width: 446px) {
+  .card {
+    padding: 3px;
+  }
+  .previews {
+    margin: 0 auto;
+    width: 320px;
+  }
+  .preview-container {
+    width: 320px;
+    height: 240px;
+  }
+  .botones {
+    flex-wrap: wrap;
+    column-gap: 20px;
+    row-gap: 20px;
+    width: 100% !important;
+    padding-right: 0;
+    margin-left: 0px;
+    justify-content: center;
+  }
+  .guardar,
+  .eliminar,
+  .despublicar {
+    font-size: 16px;
+  }
+  .despublicar {
+    width: 120px;
   }
 }
 @media (min-width: 414px) and (max-width: 768px) {
@@ -777,11 +1040,20 @@ export default {
     height: 285px;
   }
 }
-@media screen and (max-width: 768px) {
-  .table-wrapper .table-inner.is-mobile tr:not(.detail):not(.is-empty):not(.table-footer) td {
-    width: 342px !important;
+
+@media screen and (min-width: 769px) {
+  .div-label {
+    width: 100%;
   }
-  /* .guardar {
-  } */
+  .label {
+    text-align: left !important;
+  }
 }
+
+/* .table-wrapper .table-inner.is-mobile tr:not(.detail):not(.is-empty):not(.table-footer) td {
+    width: 342px !important;
+  } */
+/* .divisor {
+    width: 365px !important;
+  } */
 </style>
