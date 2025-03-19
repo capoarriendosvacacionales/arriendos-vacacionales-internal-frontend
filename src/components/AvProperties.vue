@@ -261,8 +261,10 @@
               </div>
               <div v-show="openOrCloseDelImages" class="image-container">
                 <div v-for="(file, index) in row.image" :key="index" class="preview-photos">
-                  <img :src="file" alt="Vista previa de la imagen" class="preview-img2" />
-                  <button @click="removeImage(index)" class="boton-vistaprevia2">Eliminar</button>
+                  <img :src="file.signedUrl" alt="Vista previa de la imagen" class="preview-img2" />
+                  <button @click="removeImageToDelete(index)" class="boton-vistaprevia2">
+                    Eliminar
+                  </button>
                 </div>
               </div>
             </section>
@@ -379,6 +381,7 @@ export default {
       openOrCloseDelImages: false,
       openOrCloseAImages: false, // Para agregar nuevas fotos
       previewFiles: [],
+      previewFilesToDelete: [],
       previewFilesToModify: [],
       address: null,
       municipality: null,
@@ -449,14 +452,35 @@ export default {
       try {
         this.isLoading = true
         property.userId = userId
-        const body = {
-          ...property,
-        }
+        const body = { ...property }
+        delete body.image
         const updateProfile = await api.patch(
           `${import.meta.env.VITE_BACKEND_PATCH_MODIFY_PROPERTY}`,
           body,
         )
         if (updateProfile || !updateProfile) {
+          if (this.previewFilesToModify.length > 0) {
+            const uploadedPhotosToModify = await this.uploadPhotosToModify(property.codeProperty)
+
+            if (!uploadedPhotosToModify) {
+              throw new Error('Fotos no cargadas!')
+            }
+
+            const imageBody = {
+              userId: userId,
+              codeProperty: property.codeProperty,
+            }
+
+            const updatedListImages = await api.patch(
+              `${import.meta.env.VITE_BACKEND_PATCH_ADD_IMAGES}`,
+              imageBody,
+            )
+
+            if (!updatedListImages) {
+              throw new Error('Fotos no listadas!')
+            }
+            this.ok = 'Propiedad actualizada!'
+          }
           this.ok = 'Propiedad actualizada!'
         }
         await this.fetchProperties()
@@ -480,6 +504,34 @@ export default {
         // Crear FormData para enviar las imágenes y el userId al backend
         const formData = new FormData()
         this.previewFiles.forEach((fileObj) => {
+          formData.append('files', fileObj.file) // Agrega cada archivo al FormData
+        })
+        formData.append('userId', this.userId) // Agrega el userId al FormData
+        formData.append('propertyId', propertyId) // Agrega el propertyId al FormData
+
+        await api.post(`${import.meta.env.VITE_BACKEND_POST_UPLOAD_PROPERTY}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+
+        return true
+      } catch (error) {
+        return error
+      }
+    },
+    async uploadPhotosToModify(propertyId) {
+      try {
+        if (this.previewFilesToModify.length === 0) {
+          this.isCardModalActive = true
+          this.error = 'Por favor, selecciona al menos una foto para subir.'
+          this.isLoading = false
+          return
+        }
+
+        // Crear FormData para enviar las imágenes y el userId al backend
+        const formData = new FormData()
+        this.previewFilesToModify.forEach((fileObj) => {
           formData.append('files', fileObj.file) // Agrega cada archivo al FormData
         })
         formData.append('userId', this.userId) // Agrega el userId al FormData
@@ -666,11 +718,15 @@ export default {
     removeImage(index) {
       this.previewFiles.splice(index, 1)
     },
+    removeImageToDelete(index) {
+      this.previewFilesToDelete.splice(index, 1)
+    },
     removeImageToModify(index) {
       this.previewFilesToModify.splice(index, 1)
     },
     closeModal() {
       this.isCardModalActive = false
+      window.location.reload()
     },
   },
 }
