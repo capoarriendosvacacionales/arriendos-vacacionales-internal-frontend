@@ -262,7 +262,7 @@
               <div v-show="openOrCloseDelImages" class="image-container">
                 <div v-for="(file, index) in row.image" :key="index" class="preview-photos">
                   <img :src="file.signedUrl" alt="Vista previa de la imagen" class="preview-img2" />
-                  <button @click="removeImageToDelete(index)" class="boton-vistaprevia2">
+                  <button @click="removeImageToDelete(row, index)" class="boton-vistaprevia2">
                     Eliminar
                   </button>
                 </div>
@@ -481,9 +481,27 @@ export default {
             }
             this.ok = 'Propiedad actualizada!'
           }
+
+          console.log('this.previewFilesToDelete:', this.previewFilesToDelete)
+
+          if (this.previewFilesToDelete.length > 0) {
+            const deletedPhotosToModify = await this.deletePhotosToModify(
+              userId,
+              property.codeProperty,
+              this.previewFilesToDelete,
+            )
+
+            console.log('deletedPhotosToModify:', deletedPhotosToModify)
+
+            if (!deletedPhotosToModify) {
+              throw new Error('Fotos no cargadas!')
+            }
+
+            this.ok = 'Propiedad actualizada!'
+          }
           this.ok = 'Propiedad actualizada!'
         }
-        await this.fetchProperties()
+        // await this.fetchProperties()
         this.isLoading = false
         this.isCardModalActive = true
       } catch (error) {
@@ -546,6 +564,26 @@ export default {
         return true
       } catch (error) {
         return error
+      }
+    },
+    async deletePhotosToModify(userId, codeProperty, previewFilesToDelete) {
+      try {
+        this.isLoading = true
+        const body = {
+          userId: userId,
+          codeProperty: codeProperty,
+          images: previewFilesToDelete,
+        }
+        const deleteProfile = await api.post(`${import.meta.env.VITE_BACKEND_POST_DELETE_IMAGES}`, {
+          data: body,
+        })
+        this.isLoading = false
+        this.isCardModalActive = true
+        return deleteProfile
+      } catch (error) {
+        this.isCardModalActive = true
+        this.error = error
+        this.isLoading = false
       }
     },
     async uploadProperty() {
@@ -718,8 +756,10 @@ export default {
     removeImage(index) {
       this.previewFiles.splice(index, 1)
     },
-    removeImageToDelete(index) {
-      this.previewFilesToDelete.splice(index, 1)
+    removeImageToDelete(row, index) {
+      const deletedImage = row.image[index].fileName
+      this.previewFilesToDelete.push(deletedImage)
+      row.image.splice(index, 1)
     },
     removeImageToModify(index) {
       this.previewFilesToModify.splice(index, 1)
