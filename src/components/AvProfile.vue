@@ -25,6 +25,7 @@
         </p>
         <input class="input mb-3" type="text" v-model="typeAccount" />
         <o-button label="Guardar" class="boton" @click="saveProfile()" />
+        <o-button label="Cerrar sesión" class="boton-logout" @click="logout()" />
         <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
           <div
             class="notification"
@@ -32,11 +33,12 @@
               'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)',
             }"
           >
-            <div class="container">
-              <i v-show="error" class="mdi mdi-close-circle mdi-main"></i>
-              <i v-show="!error" class="mdi mdi-checkbox-marked-circle mdi-main"></i>
-              <p class="notification-detail">{{ error ? error : ok }}</p>
+            <div class="container-modal">
+              <h1 class="titulo-modal">{{ tituloMensajeModal }}</h1>
               <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
+            </div>
+            <div>
+              <p class="notification-detail">{{ error ? error : ok }}</p>
             </div>
           </div>
         </o-modal>
@@ -62,6 +64,7 @@ export default {
       isLoading: false,
       isFullPage: false,
       isCardModalActive: false,
+      mensajeModal: null,
     }
   },
   async beforeMount() {
@@ -82,6 +85,7 @@ export default {
     } catch (error) {
       this.isCardModalActive = true
       this.error = error
+      this.tituloMensajeModal = 'Error'
       this.isLoading = false
     }
   },
@@ -93,6 +97,7 @@ export default {
         if (this.bankAccount === '' || this.bank === '' || this.typeAccount === '') {
           this.isCardModalActive = true
           this.error = 'Los campos Banco, Tipo de cuenta y Número de cuenta son obligatorios.'
+          this.tituloMensajeModal = 'Error'
           this.isLoading = false
           return
         }
@@ -106,11 +111,14 @@ export default {
         }
         const updateProfile = await api.patch(`${import.meta.env.VITE_BACKEND_PATCH_PROFILE}`, body)
         if (updateProfile.data.id) {
+          this.tituloMensajeModal = 'Excelente'
           this.ok = 'Perfil actualizado!'
         }
         this.isLoading = false
+        this.tituloMensajeModal = 'Excelente'
         this.isCardModalActive = true
       } catch (error) {
+        this.tituloMensajeModal = 'Error'
         this.isCardModalActive = true
         this.error = error
         this.isLoading = false
@@ -118,6 +126,12 @@ export default {
     },
     closeModal() {
       this.isCardModalActive = false
+    },
+    logout() {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('id')
+      localStorage.removeItem('user')
+      this.$router.push('/login')
     },
   },
 }
@@ -155,6 +169,18 @@ export default {
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
 }
+.boton-logout {
+  margin-top: 20px;
+  padding: 13px;
+  width: 100%;
+  max-width: 500px;
+  color: white;
+  background-color: #f70;
+  font-size: 18px;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
 span {
   margin-top: 3px;
   font-size: 14px;
@@ -167,32 +193,30 @@ span {
   border-radius: 30px;
   text-align: center;
 }
-.mdi-main {
-  margin: auto 0;
-  padding-left: 25px;
-  font-size: 50px;
-  color: #fff;
-}
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-}
 .notification-detail {
   color: #fff;
-  margin: 20px 15px 25px 20px;
-  flex-grow: 1;
-  text-align: center;
+  flex: 1; /* Ocupa el espacio sobrante */
+  text-align: center; /* O center, según prefieras */
+  padding: 7px 20px 15px 20px;
 }
 .mdi-close {
-  float: right;
-  position: relative;
-  top: -13px;
-  padding-right: 14px;
+  position: absolute;
+  margin-top: 8px;
+  right: 12px;
   color: #fff;
   font-size: 28px;
   cursor: pointer;
+}
+.container-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.titulo-modal {
+  font-size: 23px;
+  font-weight: 500;
+  color: #fff;
+  padding-top: 8px;
 }
 @media (min-width: 320px) and (max-width: 523px) {
   .card {

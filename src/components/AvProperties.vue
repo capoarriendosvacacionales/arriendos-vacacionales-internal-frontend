@@ -30,7 +30,7 @@
         <p class="mt-2 mb-1 ml-1">Políticas</p>
         <input class="input" type="text" v-model="politics" />
         <p class="mt-2 mb-1 ml-1">Precio</p>
-        <input class="input" type="text" v-model="price" />
+        <input class="input" type="number" v-model="price" />
         <p class="mt-2 mb-1 ml-1">Capacidad</p>
         <input class="input" type="number" v-model="capacity" />
         <p class="mt-2 mb-1 ml-1">Habitaciones</p>
@@ -193,7 +193,7 @@
               <div class="div-label">
                 <p class="mt-2 mb-1 ml-1 label">Precio</p>
               </div>
-              <input class="input" type="text" v-model="row.price" />
+              <input class="input" type="number" v-model="row.price" />
               <div class="div-label">
                 <p class="mt-2 mb-1 ml-1 label">Capacidad</p>
               </div>
@@ -337,13 +337,16 @@
     <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
       <div
         class="notification"
-        :style="{ 'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)' }"
+        :style="{
+          'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)',
+        }"
       >
-        <div class="container">
-          <i v-show="error" class="mdi mdi-close-circle mdi-main"></i>
-          <i v-show="!error" class="mdi mdi-checkbox-marked-circle mdi-main"></i>
-          <p class="notification-detail">{{ error ? error : ok }}</p>
+        <div class="container-modal">
+          <h1 class="titulo-modal">{{ tituloMensajeModal }}</h1>
           <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
+        </div>
+        <div>
+          <p class="notification-detail">{{ error ? error : ok }}</p>
         </div>
       </div>
     </o-modal>
@@ -365,6 +368,7 @@ export default {
       isprincipalLoading: false,
       isFullPage: false,
       isCardModalActive: false,
+      tituloMensajeModal: null,
       isEmpty: false,
       isStriped: true,
       isNarrowed: true,
@@ -421,6 +425,7 @@ export default {
       } catch (error) {
         this.isCardModalActive = true
         this.error = error
+        this.tituloMensajeModal = 'Error'
         this.isLoading = false
       }
     },
@@ -441,10 +446,12 @@ export default {
         }
         await this.fetchProperties()
         this.isLoading = false
+        this.tituloMensajeModal = 'Excelente'
         this.isCardModalActive = true
       } catch (error) {
         this.isCardModalActive = true
-        this.error = `Error: ${error}`
+        this.error = error
+        this.tituloMensajeModal = 'Error'
         this.isLoading = false
       }
     },
@@ -504,9 +511,11 @@ export default {
         // await this.fetchProperties()
         this.isLoading = false
         this.isCardModalActive = true
+        this.tituloMensajeModal = 'Excelente'
       } catch (error) {
         this.isCardModalActive = true
         this.error = error
+        this.tituloMensajeModal = 'Error'
         this.isLoading = false
       }
     },
@@ -834,36 +843,35 @@ export default {
   padding: 20px;
 }
 .notification {
-  padding: 5px 14px 0 0;
+  padding: 0;
+  padding-bottom: 3px;
   border-radius: 30px;
   text-align: center;
 }
-.mdi-main {
-  margin: auto 0;
-  padding-left: 25px;
-  font-size: 50px;
-  color: #fff;
-}
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  padding-bottom: 8px;
-}
 .notification-detail {
   color: #fff;
-  flex-grow: 1;
-  text-align: center;
+  flex: 1; /* Ocupa el espacio sobrante */
+  text-align: center; /* O center, según prefieras */
+  padding: 7px 20px 15px 20px;
 }
 .mdi-close {
-  float: right;
-  position: relative;
-  top: -18px;
-  padding-right: 3px;
+  position: absolute;
+  margin-top: 8px;
+  right: 12px;
   color: #fff;
   font-size: 28px;
   cursor: pointer;
+}
+.container-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.titulo-modal {
+  font-size: 23px;
+  font-weight: 500;
+  color: #fff;
+  padding-top: 8px;
 }
 .mdi-close-table {
   margin-left: auto;

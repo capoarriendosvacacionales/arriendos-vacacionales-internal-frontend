@@ -119,11 +119,18 @@
       </div>
     </section>
     <o-modal v-model:active="isErrorCardModalActive" :width="330" scroll="clip">
-      <div class="notification">
-        <div class="container">
-          <i class="mdi mdi-close-circle mdi-main"></i>
-          <p class="error-detail">{{ error }}</p>
+      <div
+        class="notification"
+        :style="{
+          'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)',
+        }"
+      >
+        <div class="container-modal">
+          <h1 class="titulo-modal">{{ tituloMensajeModal }}</h1>
           <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal(1)"></i>
+        </div>
+        <div>
+          <p class="notification-detail">{{ error ? error : ok }}</p>
         </div>
       </div>
     </o-modal>
@@ -142,6 +149,7 @@ export default {
       isShowAllRentals: false,
       isDetailCardModalActive: false,
       isErrorCardModalActive: false,
+      tituloMensajeModal: null,
       isFullPage: false,
       isLoading: false,
       bars: false,
@@ -185,6 +193,7 @@ export default {
     } catch (error) {
       this.isErrorCardModalActive = true
       this.error = error
+      this.tituloMensajeModal = 'Error'
       this.isLoading = false
     }
   },
@@ -198,6 +207,9 @@ export default {
 
           if (isNaN(start) || isNaN(end)) {
             console.warn('Fecha inválida encontrada en rental:', rental)
+            this.isErrorCardModalActive = true
+            this.error = 'Fecha inválida encontrada en rental'
+            this.tituloMensajeModal = 'Error'
             return
           }
 
@@ -347,32 +359,39 @@ div.datepicker .datepicker-cell.is-selected {
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
 }
+
 .notification {
-  background-color: hsl(348deg 88.3% 67.24%);
-  padding: 5px 14px 0 0;
+  padding: 0;
+  padding-bottom: 3px;
   border-radius: 30px;
   text-align: center;
 }
-.mdi-main {
-  margin: auto 0;
-  padding-left: 25px;
-  font-size: 50px;
+.notification-detail {
   color: #fff;
-}
-.container {
-  display: flex;
-}
-.error-detail {
-  color: #fff;
-  margin: 20px 15px 25px 20px;
-  text-align: justify;
+  flex: 1; /* Ocupa el espacio sobrante */
+  text-align: center; /* O center, según prefieras */
+  padding: 7px 20px 15px 20px;
 }
 .mdi-close {
-  float: right;
+  position: absolute;
+  margin-top: 8px;
+  right: 12px;
   color: #fff;
   font-size: 28px;
   cursor: pointer;
 }
+.container-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.titulo-modal {
+  font-size: 23px;
+  font-weight: 500;
+  color: #fff;
+  padding-top: 8px;
+}
+
 .mdi-close-table {
   margin-left: auto;
   color: #ffb300;
