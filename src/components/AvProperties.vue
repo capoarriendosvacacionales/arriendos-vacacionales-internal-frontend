@@ -503,16 +503,12 @@ export default {
             this.ok = 'Propiedad actualizada!'
           }
 
-          console.log('this.previewFilesToDelete:', this.previewFilesToDelete)
-
           if (this.previewFilesToDelete.length > 0) {
             const deletedPhotosToModify = await this.deletePhotosToModify(
               userId,
               property.codeProperty,
               this.previewFilesToDelete,
             )
-
-            console.log('deletedPhotosToModify:', deletedPhotosToModify)
 
             if (!deletedPhotosToModify) {
               throw new Error('Fotos no cargadas!')
@@ -668,8 +664,6 @@ export default {
         }
 
         let uploadedPhotos = null
-
-        console.log('this.previewFiles.length:', this.previewFiles.length)
 
         if (this.previewFiles.length > 0) {
           uploadedPhotos = await this.uploadPhotos(addProperty.data, userId)
