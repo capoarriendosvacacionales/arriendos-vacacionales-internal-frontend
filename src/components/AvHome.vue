@@ -13,22 +13,20 @@ export default {
     }
   },
   async beforeMount() {
-  try {
-
-    const response = await api.get(import.meta.env.VITE_BACKEND_TEST);
-    console.log(response.data);
-  } catch (error) {
-    console.error('Error en la petición:', error);
-  }
-},
-
+    try {
+      const response = await api.get(import.meta.env.VITE_BACKEND_TEST)
+      console.log(response.data)
+    } catch (error) {
+      console.error('Error en la petición:', error)
+    }
+  },
 }
 </script>
 
 <style scoped>
 .titulo {
   padding-top: 200px;
-  font-weight:500;
+  font-weight: 500;
   font-size: 23px;
   padding-bottom: 12px;
   color: #005187;

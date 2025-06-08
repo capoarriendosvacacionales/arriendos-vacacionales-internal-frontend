@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-  import AvHome from '../components/AvHome.vue'
+import AvHome from '../components/AvHome.vue'
 </script>

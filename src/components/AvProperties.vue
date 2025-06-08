@@ -473,6 +473,8 @@ export default {
         property.userId = userId
         const body = { ...property }
         delete body.image
+        delete body._id
+        delete body.__v
         const updateProfile = await api.patch(
           `${import.meta.env.VITE_BACKEND_PATCH_MODIFY_PROPERTY}`,
           body,
@@ -610,7 +612,6 @@ export default {
     async uploadProperty() {
       try {
         this.isLoading = true
-
         if (
           this.address === '' ||
           this.municipality === '' ||

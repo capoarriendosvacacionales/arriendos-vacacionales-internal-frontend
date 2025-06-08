@@ -6,5 +6,4 @@
 
 <script setup>
 import AvCalendar from '../components/AvCalendar.vue'
-
 </script>

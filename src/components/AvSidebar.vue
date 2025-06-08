@@ -23,9 +23,9 @@ export default {
   data() {
     return {
       expandOnHover: false,
-      reduce: false
+      reduce: false,
     }
-  }
+  },
 }
 </script>
 

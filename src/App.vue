@@ -8,14 +8,14 @@
     <router-view :key="$route.path"></router-view>
   </main>
   <footer v-if="$route.meta.layout !== 'auth'">
-    <AvFooter/>
+    <AvFooter />
   </footer>
 </template>
 
 <script>
-import AvNavbar from './components/AvNavbar.vue';
+import AvNavbar from './components/AvNavbar.vue'
 import AvFooter from './components/AvFooter.vue'
-import AvSidebar from './components/AvSidebar.vue';
+import AvSidebar from './components/AvSidebar.vue'
 import { useMenuStateInStore } from '@/stores/store'
 
 export default {
@@ -36,7 +36,9 @@ export default {
 
 <style>
 /* Aseguramos que html, body y el contenedor principal ocupen el 100% de la altura */
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
   margin: 0;
 }
@@ -47,7 +49,8 @@ html, body, #app {
   min-height: 100vh;
 }
 /* El header y footer ocupan su altura natural */
-header, footer {
+header,
+footer {
   flex-shrink: 0;
 }
 /* El main se expande para ocupar el espacio restante */
