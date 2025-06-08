@@ -65,6 +65,7 @@ export default {
       isFullPage: false,
       isCardModalActive: false,
       mensajeModal: null,
+      tituloMensajeModal: null,
     }
   },
   async beforeMount() {
@@ -115,7 +116,6 @@ export default {
           this.ok = 'Perfil actualizado!'
         }
         this.isLoading = false
-        this.tituloMensajeModal = 'Excelente'
         this.isCardModalActive = true
       } catch (error) {
         this.tituloMensajeModal = 'Error'

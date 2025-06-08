@@ -18,6 +18,10 @@ app.use(createPinia())
 app.use(router)
 
 app.use(Oruga, {
+  datepicker: {
+    mobileModal: false,
+    mobileBreakpoint: 0,
+  },
   ...bulmaConfig, // Configura Oruga para usar Bulma
   iconPack: 'mdi',
 })

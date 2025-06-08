@@ -15,6 +15,13 @@
         ></i>
       </div>
       <div v-show="openOrClose" class="add-property">
+        <div class="disclaimer">
+          <p>
+            Importante! Si no subes al menos una imagen de tu propiedad, la misma quedará
+            despublicada. Sin embargo, podrás publicarla modificándola y subiendo una o más
+            imágenes.
+          </p>
+        </div>
         <p class="mt-2 mb-1 ml-1">Dirección</p>
         <input class="input" type="text" v-model="address" />
         <p class="mt-2 mb-1 ml-1">Comuna</p>
@@ -338,7 +345,11 @@
       <div
         class="notification"
         :style="{
-          'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)',
+          'background-color': error
+            ? 'hsl(348deg 88.3% 67.24%)'
+            : major
+              ? 'hsl(36, 100%, 50%)'
+              : 'hsl(117, 81%, 34%)',
         }"
       >
         <div class="container-modal">
@@ -346,7 +357,7 @@
           <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
         </div>
         <div>
-          <p class="notification-detail">{{ error ? error : ok }}</p>
+          <p class="notification-detail">{{ error ? error : major ? major : ok }}</p>
         </div>
       </div>
     </o-modal>
@@ -364,6 +375,7 @@ export default {
       ok: null,
       userId: null,
       error: null,
+      major: null,
       isLoading: false,
       isprincipalLoading: false,
       isFullPage: false,
@@ -654,10 +666,28 @@ export default {
           throw new Error('Propiedad no creada!')
         }
 
-        const uploadedPhotos = await this.uploadPhotos(addProperty.data)
+        let uploadedPhotos = null
+
+        console.log('this.previewFiles.length:', this.previewFiles.length)
+
+        if (this.previewFiles.length > 0) {
+          uploadedPhotos = await this.uploadPhotos(addProperty.data, userId)
+        }
 
         if (!uploadedPhotos) {
-          throw new Error('Fotos no cargadas!')
+          /* this.$oruga.notification.open({
+            message:
+              'Fotos no cargadas. Puedes modificar tu propiedad y subirlas para terminar de publicarla.',
+            variant: 'warning',
+            type: 'warning',
+            duration: 5000,
+          }) */
+          this.openOrCloseAddProperty(!this.openOrClose)
+          this.isLoading = false
+          this.major =
+            'Fotos no cargadas. Puedes modificar tu propiedad y subirlas para terminar de publicarla.'
+          this.isCardModalActive = true
+          return
         }
 
         const imageBody = {
@@ -697,7 +727,7 @@ export default {
         this.beach = false
         this.petsAllow = false
         this.isLoading = false
-        this.ok = 'La propiedad fue creada!'
+        this.ok = 'La propiedad fue creada y publicada!'
         this.isCardModalActive = true
       } catch (error) {
         this.isCardModalActive = true
@@ -782,6 +812,19 @@ export default {
 </script>
 
 <style scoped>
+.disclaimer {
+  margin: 0 auto;
+  width: 310px;
+  padding: 10px;
+  margin-bottom: 40px;
+  text-align: justify;
+  font-size: 14px;
+  background-color: hsla(56, 100%, 57%, 0.452);
+  border-radius: 5px;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
 .titulo {
   font-weight: 500;
   font-size: 21px;
@@ -843,7 +886,7 @@ export default {
   padding: 20px;
 }
 .notification {
-  padding: 0;
+  padding: 20px;
   padding-bottom: 3px;
   border-radius: 30px;
   text-align: center;
@@ -1049,6 +1092,9 @@ export default {
 }
 
 @media (min-width: 320px) and (max-width: 358px) {
+  .td-table {
+    width: 400px;
+  }
   .botones {
     padding-right: 10px;
   }
@@ -1083,6 +1129,9 @@ export default {
 }
 
 @media (min-width: 359px) and (max-width: 446px) {
+  .td-table {
+    width: 400px;
+  }
   .card {
     padding: 3px;
   }
@@ -1113,6 +1162,9 @@ export default {
   }
 }
 @media (min-width: 414px) and (max-width: 768px) {
+  .td-table {
+    width: 400px;
+  }
   .previews {
     margin: 0 auto;
     width: 380px;

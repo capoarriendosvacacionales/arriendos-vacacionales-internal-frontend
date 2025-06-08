@@ -51,6 +51,7 @@ export default {
       ok: null,
       isLoading: false,
       tituloMensajeModal: null,
+      isFullPage: false,
     }
   },
   methods: {
@@ -73,8 +74,7 @@ export default {
         console.log(error)
         this.isCardModalActive = true
         this.tituloMensajeModal = 'Error'
-        this.error =
-          'Usuario o password incorrectas'
+        this.error = 'Usuario o password incorrectas'
         this.isLoading = false
       }
     },

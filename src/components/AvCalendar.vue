@@ -142,6 +142,7 @@ export default {
   name: 'AvCalendar',
   data() {
     return {
+      ok: null,
       error: null,
       filteredRentals: null,
       matchingRentals: null,
