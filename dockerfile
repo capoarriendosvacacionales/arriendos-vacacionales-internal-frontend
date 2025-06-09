@@ -3,24 +3,22 @@ FROM node:24.1.0-slim AS builder
 
 WORKDIR /app
 
-# Copia los archivos necesarios e instala dependencias
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copia el resto de los archivos y construye el proyecto
+# Copia el resto de los archivos, incluyendo .env.production
 COPY . .
-RUN npm run build
 
-# Etapa de servidor con serve
+# Asegúrate de que Vite construye con el modo production
+RUN npm run build -- --mode production
+
+# Etapa de ejecución
 FROM node:24.1.0-slim
 
-# Instala serve globalmente
 RUN npm install -g serve
 
-# Copia los archivos de construcción de Vue a la carpeta /app
+WORKDIR /app
 COPY --from=builder /app/dist /app
 
 EXPOSE 8080
-
-# Usa serve para servir el contenido
 CMD ["serve", "-s", "/app", "-l", "8080"]

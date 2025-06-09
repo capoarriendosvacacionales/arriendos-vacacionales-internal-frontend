@@ -3,10 +3,6 @@ node_modules
 npm-debug.log
 yarn-error.log
 
-# Archivos de entorno (tú lo pasarás externamente con `--env-file` o `-e`)
-.env
-.env.* 
-
 # Archivos temporales y del sistema
 *.log
 *.tsbuildinfo
