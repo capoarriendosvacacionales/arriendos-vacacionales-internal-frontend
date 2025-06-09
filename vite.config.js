@@ -6,6 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: mode === 'development' ? '/' : '/internal/',
   plugins: [vue(), vueDevTools()],
   server: {
     host: mode === 'development', // Solo establece host en desarrollo
