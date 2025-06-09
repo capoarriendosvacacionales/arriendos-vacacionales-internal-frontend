@@ -18,9 +18,9 @@ FROM node:24.1.0-slim
 RUN npm install -g serve
 
 # Copia los archivos de construcción de Vue a la carpeta /app
-COPY --from=build /app/dist /app
+COPY --from=builder /app/dist /app
 
 EXPOSE 8080
 
-# Usa serve para servir el contenido en modo no SPA (-s está desactivado)
+# Usa serve para servir el contenido
 CMD ["serve", "/app", "-l", "8080"]
