@@ -23,4 +23,4 @@ COPY --from=builder /app/dist /app
 EXPOSE 8080
 
 # Usa serve para servir el contenido
-CMD ["serve", "/app", "-l", "8080"]
+CMD ["serve", "-s", ".", "-l", "8080"]
