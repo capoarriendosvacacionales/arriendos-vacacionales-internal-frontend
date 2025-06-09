@@ -1,5 +1,5 @@
 # Etapa de construcción
-FROM node:20-alpine AS build
+FROM node:24.1.0-slim AS builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 # Etapa de servidor con serve
-FROM node:20-alpine
+FROM node:24.1.0-slim
 
 # Instala serve globalmente
 RUN npm install -g serve

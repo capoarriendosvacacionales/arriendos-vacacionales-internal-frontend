@@ -1,0 +1,31 @@
+# Node modules locales (los reconstruye el contenedor)
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Archivos de entorno (tú lo pasarás externamente con `--env-file` o `-e`)
+.env
+.env.* 
+
+# Archivos temporales y del sistema
+*.log
+*.tsbuildinfo
+*.swp
+.DS_Store
+Thumbs.db
+
+# Test files y datos de desarrollo
+coverage
+test
+__tests__/
+jest.config.*
+*.spec.ts
+
+# IDE y configuración local
+.vscode
+.idea
+*.code-workspace
+
+# Git y otros archivos de control de versiones
+.git
+.gitignore
