@@ -14,8 +14,7 @@ export default {
   },
   async beforeMount() {
     try {
-      const response = await api.get(import.meta.env.VITE_BACKEND_TEST)
-      console.log(response.data)
+      await api.get(import.meta.env.VITE_BACKEND_TEST)
     } catch (error) {
       console.error('Error en la petición:', error)
     }

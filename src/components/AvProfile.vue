@@ -72,8 +72,6 @@ export default {
     try {
       this.isLoading = true
 
-      console.log(import.meta.env.VITE_BACKEND_GET_PROFILE)
-
       const userId = localStorage.getItem('id')
       const getProfile = await api.get(`${import.meta.env.VITE_BACKEND_GET_PROFILE}?id=${userId}`)
 

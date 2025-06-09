@@ -70,8 +70,7 @@ export default {
         localStorage.setItem('id', idUser)
         this.$router.push({ name: 'calendar' })
         this.isLoading = false
-      } catch (error) {
-        console.log(error)
+      } catch {
         this.isCardModalActive = true
         this.tituloMensajeModal = 'Error'
         this.error = 'Usuario o password incorrectas'
