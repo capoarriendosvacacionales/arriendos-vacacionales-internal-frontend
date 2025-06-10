@@ -1,22 +1,24 @@
 # Etapa de construcción
 FROM node:24.1.0-slim AS builder
 
-# Argumento para seleccionar el modo: "development" o "production"
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
 WORKDIR /app
 
-# Instala dependencias
+# Copiamos package.json y package-lock.json
 COPY package.json package-lock.json ./
+
+# Para el build de Vite necesitamos devDependencies (vite, plugins, etc.).
+# Aseguramos que NODE_ENV=development para instalar devDependencies.
+ENV NODE_ENV=development
 RUN npm ci
 
-# Copia todo el código, incluyendo .env.development y .env.production
+# Copiamos el resto del código, incluidos .env.development y .env.production
 COPY . .
 
-# Ejecuta build de Vite pasando el modo
-# Vite cargará automáticamente .env, .env.local, .env.<mode>, etc.
-RUN npm run build -- --mode $NODE_ENV
+# Argumento para indicar el modo de Vite: "development" o "production"
+ARG BUILD_MODE=production
+# Si quieres que Vite lea .env.<mode>, es decir .env.production o .env.development
+# Invocamos el build con el modo indicado.
+RUN npm run build -- --mode $BUILD_MODE
 
 # Etapa de ejecución: sirve los archivos estáticos con 'serve'
 FROM node:24.1.0-slim
@@ -24,6 +26,7 @@ FROM node:24.1.0-slim
 RUN npm install -g serve
 
 WORKDIR /app
+# Copiamos sólo la carpeta dist generada
 COPY --from=builder /app/dist /app
 
 EXPOSE 8080
