@@ -73,7 +73,11 @@ export default {
       this.isLoading = true
 
       const userId = localStorage.getItem('id')
-      const getProfile = await api.get(`${import.meta.env.VITE_BACKEND_GET_PROFILE}?id=${userId}`)
+      /* const getProfile = await api.get(`${import.meta.env.VITE_BACKEND_GET_PROFILE}?id=${userId}`) */
+
+      const getProfile = await api.get(import.meta.env.VITE_BACKEND_GET_PROFILE, {
+        params: { id: userId },
+      })
 
       this.firstName = getProfile.data.firstName
       this.lastName = getProfile.data.lastName
@@ -110,7 +114,8 @@ export default {
           bankAccount: this.bankAccount,
           typeAccount: this.typeAccount,
         }
-        const updateProfile = await api.patch(`${import.meta.env.VITE_BACKEND_PATCH_PROFILE}`, body)
+        /* const updateProfile = await api.patch(`${import.meta.env.VITE_BACKEND_PATCH_PROFILE}`, body) */
+        const updateProfile = await api.patch(import.meta.env.VITE_BACKEND_PATCH_PROFILE, body)
         if (updateProfile.data.id) {
           this.tituloMensajeModal = 'Excelente'
           this.ok = 'Perfil actualizado!'

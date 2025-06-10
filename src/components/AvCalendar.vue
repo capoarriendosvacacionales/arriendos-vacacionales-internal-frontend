@@ -170,9 +170,12 @@ export default {
     try {
       this.isLoading = true
       const userId = localStorage.getItem('id')
-      const getRentals = await api.get(
+      /* const getRentals = await api.get(
         `${import.meta.env.VITE_BACKEND_GET_RENTALS}?userId=${userId}`,
-      )
+      ) */
+      const getRentals = await api.get(import.meta.env.VITE_BACKEND_GET_RENTALS, {
+        params: { userId },
+      })
       this.rentals = getRentals.data
       this.rentalsData = getRentals.data.map((rental) => {
         const transformDate = (dateStr) => {
