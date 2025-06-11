@@ -16,7 +16,6 @@ export default defineConfig(({ command, mode }) => ({
           hmr: {
             protocol: 'ws',
             host: 'internal.arriendosvacacionales.local',
-            port: 80,
             clientPort: 80,
           },
         }
