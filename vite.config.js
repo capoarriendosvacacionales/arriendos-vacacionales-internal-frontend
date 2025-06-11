@@ -12,7 +12,7 @@ export default defineConfig(({ command, mode }) => ({
       ? {
           host: '0.0.0.0',
           port: 8080,
-          allowedHosts: ['internal.arriendosvacacionales.local'],
+          allowedHosts: ['internal.arriendosvacacionales.local', 'internal-frontend'],
           hmr: {
             host: 'internal.arriendosvacacionales.local',
             protocol: 'ws',
