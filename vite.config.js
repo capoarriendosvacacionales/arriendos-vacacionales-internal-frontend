@@ -8,7 +8,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig(({ mode }) => ({
   plugins: [vue(), vueDevTools()],
   server: {
-    host: mode === 'development' ? '0.0.0.0' : 'localhost', // Solo establece host en desarrollo
+    host: [mode === 'development'], // Solo establece host en desarrollo
     port: mode === 'development' ? 8080 : 8081, // Usa un puerto específico solo en desarrollo
     allowedHosts: ['internal.arriendosvacacionales.local'],
   },
