@@ -5,13 +5,21 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ command, mode }) => ({
   plugins: [vue(), vueDevTools()],
-  server: {
-    host: [mode === 'development'], // Solo establece host en desarrollo
-    port: mode === 'development' ? 8080 : 8081, // Usa un puerto específico solo en desarrollo
-    allowedHosts: ['internal.arriendosvacacionales.local'],
-  },
+  server:
+    command === 'serve'
+      ? {
+          host: '0.0.0.0',
+          port: 8080,
+          allowedHosts: ['internal.arriendosvacacionales.local'],
+          hmr: {
+            host: 'internal.arriendosvacacionales.local',
+            protocol: 'ws',
+            port: 8080,
+          },
+        }
+      : undefined,
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
