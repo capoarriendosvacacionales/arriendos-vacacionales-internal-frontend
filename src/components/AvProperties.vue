@@ -45,7 +45,7 @@
             <tr v-for="item in amenities" :key="item.key">
               <td class="td-table pl-1 pt-2">{{ item.label }}</td>
               <td>
-                <o-checkbox style="position: absolute; right: 0" v-model="amenities[item.key]" />
+                <o-checkbox style="position: absolute; right: 0" v-model="form[item.key]" />
               </td>
             </tr>
           </tbody>
@@ -294,190 +294,6 @@
               </div>
             </section>
           </template>
-
-          <!-- <template #detail="{ row }">
-
-            <td class="divisor">
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Tipo de propiedad</p>
-              </div>
-              <o-select v-model="row.propertyType" expanded>
-                <option v-for="option in listProperties" :key="option.value" :value="option.value">
-                  {{ option.value }}
-                </option>
-              </o-select>
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Descripción</p>
-              </div>
-              <input class="input" type="text" v-model="row.description" />
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Políticas</p>
-              </div>
-              <input class="input" type="text" v-model="row.politics" />
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Precio</p>
-              </div>
-              <input class="input" type="number" v-model="row.price" />
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Capacidad</p>
-              </div>
-              <input class="input" type="number" v-model="row.capacity" />
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Habitaciones</p>
-              </div>
-              <input class="input" type="number" v-model="row.rooms" />
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Baños</p>
-              </div>
-              <input class="input" type="number" v-model="row.bathrooms" />
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Estacionamientos</p>
-              </div>
-              <input class="input" type="number" v-model="row.parking" />
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Superficie (mts2)</p>
-              </div>
-              <input class="input" type="number" v-model="row.area" />
-              <div class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">Piscina (No/Privada/Compartida)</p>
-              </div>
-              <input class="input" type="text" v-model="row.pool" />
-              <table class="amenities-table">
-                <tbody>
-                  <tr class="">
-                    <td class="td-table mt-3 pt-3">Internet</td>
-                    <td><o-checkbox v-model="row.internet" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Aire acondicionado</td>
-                    <td><o-checkbox v-model="row.airConditioning" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Calefacción</td>
-                    <td><o-checkbox v-model="row.calefaction" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Tina de hidromasaje</td>
-                    <td><o-checkbox v-model="row.whirlpool" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Cocina equipada</td>
-                    <td><o-checkbox v-model="row.equippedKitchen" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Terraza</td>
-                    <td><o-checkbox v-model="row.terrace" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Quincho</td>
-                    <td><o-checkbox v-model="row.grillArea" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Tinaja</td>
-                    <td><o-checkbox v-model="row.tinaja" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Playa</td>
-                    <td><o-checkbox v-model="row.beach" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Accesibilidad</td>
-                    <td><o-checkbox v-model="row.accessibility" /></td>
-                  </tr>
-                  <tr>
-                    <td class="td-table pt-3">Permite mascotas</td>
-                    <td><o-checkbox v-model="row.petsAllow" /></td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-            <section class="borde">
-              <div class="contenedor-subtitulo">
-                <div class="titulo-photos">
-                  <h1 class="title-photos">Eliminar fotos</h1>
-                  <i
-                    v-show="!openOrCloseDelImages"
-                    class="mdi mdi-plus-circle mdi-36px"
-                    @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
-                  ></i>
-                  <i
-                    v-show="openOrCloseDelImages"
-                    class="mdi mdi-minus-circle mdi-36px"
-                    @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
-                  ></i>
-                </div>
-              </div>
-              <div v-show="openOrCloseDelImages" class="image-container">
-                <div v-for="(file, index) in row.image" :key="index" class="preview-photos">
-                  <img :src="file.signedUrl" alt="Vista previa de la imagen" class="preview-img2" />
-                  <button @click="removeImageToDelete(row, index)" class="boton-vistaprevia2">
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            </section>
-            <section class="borde">
-              <div class="contenedor-subtitulo">
-                <div class="titulo-photos">
-                  <h1 class="title-photos">Agregar fotos</h1>
-                  <i
-                    v-show="!openOrCloseAImages"
-                    class="mdi mdi-plus-circle mdi-36px"
-                    @click="openOrCloseAddImages(!openOrCloseAImages)"
-                  ></i>
-                  <i
-                    v-show="openOrCloseAImages"
-                    class="mdi mdi-minus-circle mdi-36px"
-                    @click="openOrCloseAddImages(!openOrCloseAImages)"
-                  ></i>
-                </div>
-              </div>
-              <div v-show="openOrCloseAImages" class="image-container2">
-                <section class="upload-photo">
-                  <o-field>
-                    <o-upload class="upload" multiple @change="handleFileUploadToModify">
-                      <div style="text-align: center">
-                        <p>
-                          <o-icon icon="upload" size="is-large" />
-                        </p>
-                        <p>Haz click aquí para subir tus fotos</p>
-                      </div>
-                    </o-upload>
-                  </o-field>
-                </section>
-              </div>
-              <section v-show="openOrCloseAImages" class="previews pb-6">
-                <div
-                  v-for="(file, index) in previewFilesToModify"
-                  :key="index"
-                  class="preview-container"
-                >
-                  <img :src="file.url" alt="Vista previa de la imagen" class="preview-img" />
-                  <button @click="removeImageToModify(index)" class="boton-vistaprevia">X</button>
-                </div>
-              </section>
-            </section>
-            <section>
-              <div class="botones">
-                <o-button type="button" class="guardar" @click="saveProperty(userId, row)"
-                  >Guardar</o-button
-                >
-                <o-button class="eliminar" @click="deleteProperty(userId, row.codeProperty, owner)"
-                  >Eliminar</o-button
-                >
-                <o-button
-                  class="despublicar"
-                  :style="{
-                    'background-color': row.isPublicationDisabled ? '#209d12c9' : '#3f3f3fc9',
-                  }"
-                  @click="
-                    publishOrUnpublishProperty(userId, row.codeProperty, !row.isPublicationDisabled)
-                  "
-                  >{{ row.isPublicationDisabled ? 'Publicar' : 'Despublicar' }}</o-button
-                >
-              </div>
-            </section>
-          </template> -->
         </o-table>
         <o-loading v-model:active="isLoading" :full-page="isFullPage">
           <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
@@ -513,6 +329,7 @@
 import api from '../api/api'
 import { propertyFields } from '@/assets/property-fields'
 import { amenities } from '@/assets/amenities'
+import { getDefaultForm } from '@/assets/get-default-form'
 export default {
   name: 'AvProperties',
   data() {
@@ -545,121 +362,12 @@ export default {
       previewFilesToDelete: [],
       previewFilesToModify: [],
       listProperties: propertyFields.listProperties,
-
-      // ✅ El formulario principal
-      form: {
-        propertyType: '',
-        address: '',
-        municipality: '',
-        resortTown: '',
-        region: '',
-        country: '',
-        description: '',
-        politics: '',
-        price: '',
-        capacity: '',
-        rooms: '',
-        bathrooms: '',
-        parking: '',
-        area: '',
-        pool: '',
-
-        // Todas las comodidades inicializadas como false
-        internet: false,
-        airConditioning: false,
-        calefaction: false,
-        whirlpool: false,
-        equippedKitchen: false,
-        terrace: false,
-        grillArea: false,
-        tinaja: false,
-        beach: false,
-        accessibility: false,
-        petsAllow: false,
-      },
-
+      form: getDefaultForm(),
       fields: propertyFields,
       editableFields: propertyFields,
       showErrors: false,
       amenities,
     }
-    /* return {
-      ok: null,
-      userId: null,
-      error: null,
-      major: null,
-      isLoading: false,
-      isprincipalLoading: false,
-      isFullPage: false,
-      isCardModalActive: false,
-      tituloMensajeModal: null,
-      isEmpty: false,
-      isStriped: true,
-      isNarrowed: true,
-      isHoverable: true,
-      hasMobileCards: true,
-      isPaginated: true,
-      showDetailIcon: true,
-      showDefaultDetail: true,
-      myProperties: [],
-      detailedRow: null,
-      perPage: 5,
-      owner: null,
-      openOrClose: false,
-      openOrCloseDelImages: false,
-      openOrCloseAImages: false, // Para agregar nuevas fotos
-      previewFiles: [],
-      previewFilesToDelete: [],
-      previewFilesToModify: [],
-      address: null,
-      municipality: null,
-      resortTown: null,
-      region: null,
-      country: null,
-      description: null,
-      politics: null,
-      price: null,
-      capacity: null,
-      rooms: null,
-      parking: null,
-      internet: false,
-      airConditioning: false,
-      calefaction: false,
-      whirlpool: false,
-      pool: null,
-      tinaja: false,
-      beach: false,
-      petsAllow: false,
-      propertyType: null,
-      area: null,
-      bathrooms: null,
-      equippedKitchen: false,
-      terrace: false,
-      grillArea: false,
-      accessibility: false,
-      listProperties: propertyFields.listProperties,
-      form: {
-        propertyType: '',
-        address: '',
-        municipality: '',
-        resortTown: '',
-        region: '',
-        country: '',
-        description: '',
-        politics: '',
-        price: '',
-        capacity: '',
-        rooms: '',
-        bathrooms: '',
-        parking: '',
-        area: '',
-        pool: '',
-      },
-      fields: propertyFields,
-      editableFields: propertyFields,
-      showErrors: false,
-      amenities,
-    } */
   },
   async beforeMount() {
     this.owner = localStorage.getItem('user')
@@ -875,24 +583,23 @@ export default {
           capacity: this.form.capacity,
           rooms: this.form.rooms,
           parking: this.form.parking,
-          internet: this.amenities.internet,
-          airConditioning: this.amenities.airConditioning,
-          calefaction: this.amenities.calefaction,
-          whirlpool: this.amenities.whirlpool,
           pool: this.form.pool,
-          tinaja: this.amenities.tinaja,
-          beach: this.amenities.beach,
-          petsAllow: this.amenities.petsAllow,
           propertyType: this.form.propertyType,
           area: this.form.area,
           bathrooms: this.form.bathrooms,
-          equippedKitchen: this.amenities.equippedKitchen,
-          terrace: this.amenities.terrace,
-          grillArea: this.amenities.grillArea,
-          accessibility: this.amenities.accessibility,
+          // ✅ Todas las amenities ahora vienen desde `this.form`
+          internet: this.form.internet,
+          airConditioning: this.form.airConditioning,
+          calefaction: this.form.calefaction,
+          whirlpool: this.form.whirlpool,
+          equippedKitchen: this.form.equippedKitchen,
+          terrace: this.form.terrace,
+          grillArea: this.form.grillArea,
+          tinaja: this.form.tinaja,
+          beach: this.form.beach,
+          accessibility: this.form.accessibility,
+          petsAllow: this.form.petsAllow,
         }
-
-        console.log('body: ', body)
 
         const addProperty = await api.post(
           `${import.meta.env.VITE_BACKEND_POST_ADD_PROPERTY}`,
@@ -942,10 +649,7 @@ export default {
         this.openOrCloseAddProperty(!this.openOrClose)
 
         // Limpia las variables de form
-        Object.keys(this.form).forEach((key) => {
-          this.form[key] = ''
-        })
-
+        this.form = getDefaultForm()
         this.previewFiles = []
         this.isLoading = false
         this.ok = 'La propiedad fue creada y publicada!'
