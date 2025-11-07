@@ -22,65 +22,34 @@
             imágenes.
           </p>
         </div>
-        <p class="mt-2 mb-1 ml-1">Dirección</p>
-        <input class="input" type="text" v-model="address" />
-        <p class="mt-2 mb-1 ml-1">Comuna</p>
-        <input class="input" type="text" v-model="municipality" />
-        <p class="mt-2 mb-1 ml-1">Ciudad</p>
-        <input class="input" type="text" v-model="resortTown" />
-        <p class="mt-2 mb-1 ml-1">Región</p>
-        <input class="input" type="text" v-model="region" />
-        <p class="mt-2 mb-1 ml-1">País</p>
-        <input class="input" type="text" v-model="country" />
-        <p class="mt-2 mb-1 ml-1">Descripción</p>
-        <input class="input" type="text" v-model="description" />
-        <p class="mt-2 mb-1 ml-1">Políticas</p>
-        <input class="input" type="text" v-model="politics" />
-        <p class="mt-2 mb-1 ml-1">Precio</p>
-        <input class="input" type="number" v-model="price" />
-        <p class="mt-2 mb-1 ml-1">Capacidad</p>
-        <input class="input" type="number" v-model="capacity" />
-        <p class="mt-2 mb-1 ml-1">Habitaciones</p>
-        <input class="input" type="number" v-model="rooms" />
-        <p class="mt-2 mb-1 ml-1">Estacionamientos</p>
-        <input class="input" type="number" v-model="parking" />
+        <div v-for="field in fields" :key="field.key" class="mb-3">
+          <p class="mt-2 mb-1 ml-1">{{ field.label }}</p>
+
+          <o-input
+            v-if="field.type !== 'select'"
+            v-model="form[field.key]"
+            :type="field.type"
+            expanded
+          />
+
+          <o-select v-else v-model="form[field.key]" expanded>
+            <option v-for="option in field.options" :key="option.value" :value="option.label">
+              {{ option.label }}
+            </option>
+          </o-select>
+
+          <p v-if="showErrors && !form[field.key]" class="error-msg">Debes completar este campo</p>
+        </div>
         <table class="mt-1">
           <tbody>
-            <tr>
-              <td class="td-table pl-1 pt-2">Internet</td>
-              <td><o-checkbox style="position: absolute; right: 0" v-model="internet" /></td>
-            </tr>
-            <tr>
-              <td class="td-table pl-1 pt-2">Aire acondicionado</td>
-              <td><o-checkbox style="position: absolute; right: 0" v-model="airConditioning" /></td>
-            </tr>
-            <tr>
-              <td class="td-table pl-1 pt-2">Calefacción</td>
-              <td><o-checkbox style="position: absolute; right: 0" v-model="calefaction" /></td>
-            </tr>
-            <tr>
-              <td class="td-table pl-1 pt-2">Tina de hidromasaje</td>
-              <td><o-checkbox style="position: absolute; right: 0" v-model="whirlpool" /></td>
-            </tr>
-            <tr>
-              <td class="td-table pl-1 pt-2">Piscina</td>
-              <td><o-checkbox style="position: absolute; right: 0" v-model="pool" /></td>
-            </tr>
-            <tr>
-              <td class="td-table pl-1 pt-2">Tinaja</td>
-              <td><o-checkbox style="position: absolute; right: 0" v-model="tinaja" /></td>
-            </tr>
-            <tr>
-              <td class="td-table pl-1 pt-2">Playa</td>
-              <td><o-checkbox style="position: absolute; right: 0" v-model="beach" /></td>
-            </tr>
-            <tr>
-              <td class="td-table pl-1 pt-2">Permite mascotas</td>
-              <td><o-checkbox style="position: absolute; right: 0" v-model="petsAllow" /></td>
+            <tr v-for="item in amenities" :key="item.key">
+              <td class="td-table pl-1 pt-2">{{ item.label }}</td>
+              <td>
+                <o-checkbox style="position: absolute; right: 0" v-model="amenities[item.key]" />
+              </td>
             </tr>
           </tbody>
         </table>
-
         <section>
           <section class="upload-photo">
             <o-field>
@@ -101,8 +70,14 @@
             </div>
           </section>
           <div class="div-boton">
-            <o-button @click="uploadProperty()" class="guardar">Guardar</o-button>
+            <o-button class="guardar" @click.prevent="uploadProperty">Guardar</o-button>
           </div>
+          <p
+            v-if="showErrors && Object.values(form).some((v) => v === '' || v === null)"
+            class="error-msg has-text-centered"
+          >
+            Debes completar todos los campos obligatorios
+          </p>
           <o-loading v-model:active="isLoading" :full-page="isFullPage">
             <i class="mdi mdi-reload mdi-36px" style="color: transparent"></i>
           </o-loading>
@@ -189,6 +164,148 @@
 
           <template #detail="{ row }">
             <td class="divisor">
+              <!-- Campos editables dinámicos -->
+              <div v-for="field in editableFields" :key="field.key" class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">{{ field.label }}</p>
+
+                <!-- Input normal -->
+                <input
+                  v-if="field.type === 'text' || field.type === 'number'"
+                  class="input"
+                  :type="field.type"
+                  v-model="row[field.key]"
+                />
+
+                <!-- Select -->
+                <o-select
+                  v-else-if="field.type === 'select'"
+                  class="input-select"
+                  expanded
+                  v-model="row[field.key]"
+                >
+                  <option v-for="option in field.options" :key="option.value" :value="option.value">
+                    {{ option.label }}
+                  </option>
+                </o-select>
+              </div>
+
+              <!-- Checkboxes dinámicos -->
+              <table class="amenities-table">
+                <tbody>
+                  <tr v-for="amenity in amenities" :key="amenity.key">
+                    <td class="td-table pt-3">{{ amenity.label }}</td>
+                    <td><o-checkbox v-model="row[amenity.key]" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+
+            <!-- Sección: Eliminar fotos -->
+            <section class="borde">
+              <div class="contenedor-subtitulo">
+                <div class="titulo-photos">
+                  <h1 class="title-photos">Eliminar fotos</h1>
+                  <i
+                    v-show="!openOrCloseDelImages"
+                    class="mdi mdi-plus-circle mdi-36px"
+                    @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
+                  ></i>
+                  <i
+                    v-show="openOrCloseDelImages"
+                    class="mdi mdi-minus-circle mdi-36px"
+                    @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
+                  ></i>
+                </div>
+              </div>
+
+              <div v-show="openOrCloseDelImages" class="image-container">
+                <div v-for="(file, index) in row.image" :key="index" class="preview-photos">
+                  <img :src="file.signedUrl" alt="Vista previa" class="preview-img2" />
+                  <button @click="removeImageToDelete(row, index)" class="boton-vistaprevia2">
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- Sección: Agregar fotos -->
+            <section class="borde">
+              <div class="contenedor-subtitulo">
+                <div class="titulo-photos">
+                  <h1 class="title-photos">Agregar fotos</h1>
+                  <i
+                    v-show="!openOrCloseAImages"
+                    class="mdi mdi-plus-circle mdi-36px"
+                    @click="openOrCloseAddImages(!openOrCloseAImages)"
+                  ></i>
+                  <i
+                    v-show="openOrCloseAImages"
+                    class="mdi mdi-minus-circle mdi-36px"
+                    @click="openOrCloseAddImages(!openOrCloseAImages)"
+                  ></i>
+                </div>
+              </div>
+
+              <div v-show="openOrCloseAImages" class="image-container2">
+                <section class="upload-photo">
+                  <o-field>
+                    <o-upload class="upload" multiple @change="handleFileUploadToModify">
+                      <div style="text-align: center">
+                        <p><o-icon icon="upload" size="is-large" /></p>
+                        <p>Haz click aquí para subir tus fotos</p>
+                      </div>
+                    </o-upload>
+                  </o-field>
+                </section>
+              </div>
+
+              <section v-show="openOrCloseAImages" class="previews pb-6">
+                <div
+                  v-for="(file, index) in previewFilesToModify"
+                  :key="index"
+                  class="preview-container"
+                >
+                  <img :src="file.url" alt="Vista previa" class="preview-img" />
+                  <button @click="removeImageToModify(index)" class="boton-vistaprevia">X</button>
+                </div>
+              </section>
+            </section>
+
+            <!-- Botones -->
+            <section>
+              <div class="botones">
+                <o-button type="button" class="guardar" @click="saveProperty(userId, row)"
+                  >Guardar</o-button
+                >
+                <o-button class="eliminar" @click="deleteProperty(userId, row.codeProperty, owner)">
+                  Eliminar
+                </o-button>
+                <o-button
+                  class="despublicar"
+                  :style="{
+                    'background-color': row.isPublicationDisabled ? '#209d12c9' : '#3f3f3fc9',
+                  }"
+                  @click="
+                    publishOrUnpublishProperty(userId, row.codeProperty, !row.isPublicationDisabled)
+                  "
+                >
+                  {{ row.isPublicationDisabled ? 'Publicar' : 'Despublicar' }}
+                </o-button>
+              </div>
+            </section>
+          </template>
+
+          <!-- <template #detail="{ row }">
+
+            <td class="divisor">
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Tipo de propiedad</p>
+              </div>
+              <o-select v-model="row.propertyType" expanded>
+                <option v-for="option in listProperties" :key="option.value" :value="option.value">
+                  {{ option.value }}
+                </option>
+              </o-select>
               <div class="div-label">
                 <p class="mt-2 mb-1 ml-1 label">Descripción</p>
               </div>
@@ -210,9 +327,21 @@
               </div>
               <input class="input" type="number" v-model="row.rooms" />
               <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Baños</p>
+              </div>
+              <input class="input" type="number" v-model="row.bathrooms" />
+              <div class="div-label">
                 <p class="mt-2 mb-1 ml-1 label">Estacionamientos</p>
               </div>
               <input class="input" type="number" v-model="row.parking" />
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Superficie (mts2)</p>
+              </div>
+              <input class="input" type="number" v-model="row.area" />
+              <div class="div-label">
+                <p class="mt-2 mb-1 ml-1 label">Piscina (No/Privada/Compartida)</p>
+              </div>
+              <input class="input" type="text" v-model="row.pool" />
               <table class="amenities-table">
                 <tbody>
                   <tr class="">
@@ -232,8 +361,16 @@
                     <td><o-checkbox v-model="row.whirlpool" /></td>
                   </tr>
                   <tr>
-                    <td class="td-table pt-3">Piscina</td>
-                    <td><o-checkbox v-model="row.pool" /></td>
+                    <td class="td-table pt-3">Cocina equipada</td>
+                    <td><o-checkbox v-model="row.equippedKitchen" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Terraza</td>
+                    <td><o-checkbox v-model="row.terrace" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Quincho</td>
+                    <td><o-checkbox v-model="row.grillArea" /></td>
                   </tr>
                   <tr>
                     <td class="td-table pt-3">Tinaja</td>
@@ -242,6 +379,10 @@
                   <tr>
                     <td class="td-table pt-3">Playa</td>
                     <td><o-checkbox v-model="row.beach" /></td>
+                  </tr>
+                  <tr>
+                    <td class="td-table pt-3">Accesibilidad</td>
+                    <td><o-checkbox v-model="row.accessibility" /></td>
                   </tr>
                   <tr>
                     <td class="td-table pt-3">Permite mascotas</td>
@@ -318,7 +459,9 @@
             </section>
             <section>
               <div class="botones">
-                <o-button class="guardar" @click="saveProperty(userId, row)">Guardar</o-button>
+                <o-button type="button" class="guardar" @click="saveProperty(userId, row)"
+                  >Guardar</o-button
+                >
                 <o-button class="eliminar" @click="deleteProperty(userId, row.codeProperty, owner)"
                   >Eliminar</o-button
                 >
@@ -334,7 +477,7 @@
                 >
               </div>
             </section>
-          </template>
+          </template> -->
         </o-table>
         <o-loading v-model:active="isLoading" :full-page="isFullPage">
           <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
@@ -368,10 +511,79 @@
 </template>
 <script>
 import api from '../api/api'
+import { propertyFields } from '@/assets/property-fields'
+import { amenities } from '@/assets/amenities'
 export default {
   name: 'AvProperties',
   data() {
     return {
+      ok: null,
+      userId: null,
+      error: null,
+      major: null,
+      isLoading: false,
+      isprincipalLoading: false,
+      isFullPage: false,
+      isCardModalActive: false,
+      tituloMensajeModal: null,
+      isEmpty: false,
+      isStriped: true,
+      isNarrowed: true,
+      isHoverable: true,
+      hasMobileCards: true,
+      isPaginated: true,
+      showDetailIcon: true,
+      showDefaultDetail: true,
+      myProperties: [],
+      detailedRow: null,
+      perPage: 5,
+      owner: null,
+      openOrClose: false,
+      openOrCloseDelImages: false,
+      openOrCloseAImages: false,
+      previewFiles: [],
+      previewFilesToDelete: [],
+      previewFilesToModify: [],
+      listProperties: propertyFields.listProperties,
+
+      // ✅ El formulario principal
+      form: {
+        propertyType: '',
+        address: '',
+        municipality: '',
+        resortTown: '',
+        region: '',
+        country: '',
+        description: '',
+        politics: '',
+        price: '',
+        capacity: '',
+        rooms: '',
+        bathrooms: '',
+        parking: '',
+        area: '',
+        pool: '',
+
+        // Todas las comodidades inicializadas como false
+        internet: false,
+        airConditioning: false,
+        calefaction: false,
+        whirlpool: false,
+        equippedKitchen: false,
+        terrace: false,
+        grillArea: false,
+        tinaja: false,
+        beach: false,
+        accessibility: false,
+        petsAllow: false,
+      },
+
+      fields: propertyFields,
+      editableFields: propertyFields,
+      showErrors: false,
+      amenities,
+    }
+    /* return {
       ok: null,
       userId: null,
       error: null,
@@ -414,11 +626,40 @@ export default {
       airConditioning: false,
       calefaction: false,
       whirlpool: false,
-      pool: false,
+      pool: null,
       tinaja: false,
       beach: false,
       petsAllow: false,
-    }
+      propertyType: null,
+      area: null,
+      bathrooms: null,
+      equippedKitchen: false,
+      terrace: false,
+      grillArea: false,
+      accessibility: false,
+      listProperties: propertyFields.listProperties,
+      form: {
+        propertyType: '',
+        address: '',
+        municipality: '',
+        resortTown: '',
+        region: '',
+        country: '',
+        description: '',
+        politics: '',
+        price: '',
+        capacity: '',
+        rooms: '',
+        bathrooms: '',
+        parking: '',
+        area: '',
+        pool: '',
+      },
+      fields: propertyFields,
+      editableFields: propertyFields,
+      showErrors: false,
+      amenities,
+    } */
   },
   async beforeMount() {
     this.owner = localStorage.getItem('user')
@@ -608,22 +849,11 @@ export default {
     async uploadProperty() {
       try {
         this.isLoading = true
-        if (
-          this.address === '' ||
-          this.municipality === '' ||
-          this.resortTown === '' ||
-          this.region === '' ||
-          this.country === '' ||
-          this.description === '' ||
-          this.politics === '' ||
-          this.price === null ||
-          this.capacity === null ||
-          this.rooms === null ||
-          this.parking === null
-        ) {
-          this.isCardModalActive = true
-          this.error =
-            'Los campos Dirección, Comuna, Ciudad, Región, País, Descripción, Políticas, Precio, Capacidad, Número de habitaciones y Cantidad de estacionamiento son obligatorios.'
+
+        // Valida que ningun campo obligatorio sea null, devuelve error como texto bajo los objetos y retorna
+        this.showErrors = true
+        const hasEmpty = Object.values(this.form).some((v) => v === '' || v === null)
+        if (hasEmpty) {
           this.isLoading = false
           return
         }
@@ -634,26 +864,36 @@ export default {
         const body = {
           userId: userId,
           owner: owner,
-          address: this.address,
-          municipality: this.municipality,
-          resortTown: this.resortTown,
-          region: this.region,
-          country: this.country,
-          description: this.description,
-          politics: this.politics,
-          price: this.price,
-          capacity: this.capacity,
-          rooms: this.rooms,
-          parking: this.parking,
-          internet: this.internet,
-          airConditioning: this.airConditioning,
-          calefaction: this.calefaction,
-          whirlpool: this.whirlpool,
-          pool: this.pool,
-          tinaja: this.tinaja,
-          beach: this.beach,
-          petsAllow: this.petsAllow,
+          address: this.form.address,
+          municipality: this.form.municipality,
+          resortTown: this.form.resortTown,
+          region: this.form.region,
+          country: this.form.country,
+          description: this.form.description,
+          politics: this.form.politics,
+          price: this.form.price,
+          capacity: this.form.capacity,
+          rooms: this.form.rooms,
+          parking: this.form.parking,
+          internet: this.amenities.internet,
+          airConditioning: this.amenities.airConditioning,
+          calefaction: this.amenities.calefaction,
+          whirlpool: this.amenities.whirlpool,
+          pool: this.form.pool,
+          tinaja: this.amenities.tinaja,
+          beach: this.amenities.beach,
+          petsAllow: this.amenities.petsAllow,
+          propertyType: this.form.propertyType,
+          area: this.form.area,
+          bathrooms: this.form.bathrooms,
+          equippedKitchen: this.amenities.equippedKitchen,
+          terrace: this.amenities.terrace,
+          grillArea: this.amenities.grillArea,
+          accessibility: this.amenities.accessibility,
         }
+
+        console.log('body: ', body)
+
         const addProperty = await api.post(
           `${import.meta.env.VITE_BACKEND_POST_ADD_PROPERTY}`,
           body,
@@ -701,26 +941,12 @@ export default {
 
         this.openOrCloseAddProperty(!this.openOrClose)
 
+        // Limpia las variables de form
+        Object.keys(this.form).forEach((key) => {
+          this.form[key] = ''
+        })
+
         this.previewFiles = []
-        this.address = null
-        this.municipality = null
-        this.resortTown = null
-        this.region = null
-        this.country = null
-        this.description = null
-        this.politics = null
-        this.price = null
-        this.capacity = null
-        this.rooms = null
-        this.parking = null
-        this.internet = false
-        this.airConditioning = false
-        this.calefaction = false
-        this.whirlpool = false
-        this.pool = false
-        this.tinaja = false
-        this.beach = false
-        this.petsAllow = false
         this.isLoading = false
         this.ok = 'La propiedad fue creada y publicada!'
         this.isCardModalActive = true
@@ -932,6 +1158,11 @@ export default {
   display: flex;
   justify-content: center;
   padding-top: 20px;
+}
+.error-msg {
+  color: red;
+  font-size: 0.9rem;
+  margin-left: 4px;
 }
 .botones {
   display: flex;

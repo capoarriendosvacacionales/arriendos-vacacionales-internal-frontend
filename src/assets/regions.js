@@ -1,0 +1,18 @@
+export const listRegions = [
+  { label: 'Región de Arica y Parinacota', value: 'Región de Arica y Parinacota' },
+  { label: 'Región de Tarapacá', value: 'Región de Tarapacá' },
+  { label: 'Región de Antofagasta', value: 'Región de Antofagasta' },
+  { label: 'Región de Atacama', value: 'Región de Atacama' },
+  { label: 'Región de Coquimbo', value: 'Región de Coquimbo' },
+  { label: 'Región de Valparaíso', value: 'Región de Valparaíso' },
+  { label: 'Región Metropolitana', value: 'Región Metropolitana' },
+  { label: 'Región de O’Higgins', value: 'Región de O’Higgins' },
+  { label: 'Región del Maule', value: 'Región del Maule' },
+  { label: 'Región del Ñuble', value: 'Región del Ñuble' },
+  { label: 'Región del Biobío', value: 'Región del Biobío' },
+  { label: 'Región de La Araucanía', value: 'Región de La Araucanía' },
+  { label: 'Región de Los Ríos', value: 'Región de Los Ríos' },
+  { label: 'Región de Los Lagos', value: 'Región de Los Lagos' },
+  { label: 'Región de Aysén', value: 'Región de Aysén' },
+  { label: 'Región de Magallanes', value: 'Región de Magallanes' },
+]
