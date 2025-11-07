@@ -425,9 +425,6 @@ export default {
         delete body._id
         delete body.__v
 
-        console.log('property: ', property)
-        console.log('body: ', body)
-
         const updateProfile = await api.patch(
           `${import.meta.env.VITE_BACKEND_PATCH_MODIFY_PROPERTY}`,
           body,
