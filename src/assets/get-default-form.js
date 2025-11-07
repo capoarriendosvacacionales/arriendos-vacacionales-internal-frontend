@@ -1,9 +1,5 @@
-// fuera del componente (o en un módulo aparte)
-import { amenities } from './amenities'
-
 export function getDefaultForm() {
-  // base vacía para campos del formulario
-  const form = {
+  return {
     propertyType: '',
     address: '',
     municipality: '',
@@ -19,11 +15,18 @@ export function getDefaultForm() {
     parking: null,
     area: null,
     pool: '',
-  }
 
-  // Setea todas las amenities como false
-  for (const a of amenities) {
-    form[a.key] = false
+    // ✅ todas las amenities en false
+    internet: false,
+    airConditioning: false,
+    calefaction: false,
+    whirlpool: false,
+    equippedKitchen: false,
+    terrace: false,
+    grillArea: false,
+    tinaja: false,
+    beach: false,
+    accessibility: false,
+    petsAllow: false,
   }
-  return form
 }

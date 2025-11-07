@@ -424,6 +424,10 @@ export default {
         delete body.image
         delete body._id
         delete body.__v
+
+        console.log('property: ', property)
+        console.log('body: ', body)
+
         const updateProfile = await api.patch(
           `${import.meta.env.VITE_BACKEND_PATCH_MODIFY_PROPERTY}`,
           body,
@@ -569,37 +573,13 @@ export default {
         const userId = localStorage.getItem('id')
         const owner = localStorage.getItem('user')
 
-        const body = {
-          userId: userId,
-          owner: owner,
-          address: this.form.address,
-          municipality: this.form.municipality,
-          resortTown: this.form.resortTown,
-          region: this.form.region,
-          country: this.form.country,
-          description: this.form.description,
-          politics: this.form.politics,
-          price: this.form.price,
-          capacity: this.form.capacity,
-          rooms: this.form.rooms,
-          parking: this.form.parking,
-          pool: this.form.pool,
-          propertyType: this.form.propertyType,
-          area: this.form.area,
-          bathrooms: this.form.bathrooms,
-          // ✅ Todas las amenities ahora vienen desde `this.form`
-          internet: this.form.internet,
-          airConditioning: this.form.airConditioning,
-          calefaction: this.form.calefaction,
-          whirlpool: this.form.whirlpool,
-          equippedKitchen: this.form.equippedKitchen,
-          terrace: this.form.terrace,
-          grillArea: this.form.grillArea,
-          tinaja: this.form.tinaja,
-          beach: this.form.beach,
-          accessibility: this.form.accessibility,
-          petsAllow: this.form.petsAllow,
-        }
+        const body = JSON.parse(
+          JSON.stringify({
+            ...this.form,
+            userId,
+            owner,
+          }),
+        )
 
         const addProperty = await api.post(
           `${import.meta.env.VITE_BACKEND_POST_ADD_PROPERTY}`,
@@ -617,13 +597,6 @@ export default {
         }
 
         if (!uploadedPhotos) {
-          /* this.$oruga.notification.open({
-            message:
-              'Fotos no cargadas. Puedes modificar tu propiedad y subirlas para terminar de publicarla.',
-            variant: 'warning',
-            type: 'warning',
-            duration: 5000,
-          }) */
           this.openOrCloseAddProperty(!this.openOrClose)
           this.isLoading = false
           this.major =
