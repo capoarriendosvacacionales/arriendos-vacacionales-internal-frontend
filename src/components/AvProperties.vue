@@ -38,7 +38,9 @@
             </option>
           </o-select>
 
-          <p v-if="showErrors && !form[field.key]" class="error-msg">Debes completar este campo</p>
+          <p v-if="showErrorsAdd && !form[field.key]" class="error-msg">
+            Debes completar este campo
+          </p>
         </div>
         <table class="mt-1">
           <tbody>
@@ -73,7 +75,7 @@
             <o-button class="guardar" @click.prevent="uploadProperty">Guardar</o-button>
           </div>
           <p
-            v-if="showErrors && Object.values(form).some((v) => v === '' || v === null)"
+            v-if="showErrorsAdd && Object.values(form).some((v) => v === '' || v === null)"
             class="error-msg has-text-centered"
           >
             Debes completar todos los campos obligatorios
@@ -187,6 +189,12 @@
                     {{ option.label }}
                   </option>
                 </o-select>
+                <p
+                  v-if="showErrorsUpdate && (row[field.key] === '' || row[field.key] === null)"
+                  class="error-msg"
+                >
+                  Debes completar este campo
+                </p>
               </div>
 
               <!-- Checkboxes dinámicos -->
@@ -292,6 +300,9 @@
                   {{ row.isPublicationDisabled ? 'Publicar' : 'Despublicar' }}
                 </o-button>
               </div>
+              <p v-if="showErrorsUpdate && hasEmptyFields(row)" class="error-msg-button">
+                Debes completar todos los campos obligatorios
+              </p>
             </section>
           </template>
         </o-table>
@@ -365,7 +376,8 @@ export default {
       form: getDefaultForm(),
       fields: propertyFields,
       editableFields: propertyFields,
-      showErrors: false,
+      showErrorsAdd: false,
+      showErrorsUpdate: {},
       amenities,
     }
   },
@@ -374,6 +386,9 @@ export default {
     await this.fetchProperties()
   },
   methods: {
+    hasEmptyFields(row) {
+      return Object.values(row).some((v) => v === '' || v === null)
+    },
     async fetchProperties() {
       try {
         this.isLoading = true
@@ -419,6 +434,15 @@ export default {
     async saveProperty(userId, property) {
       try {
         this.isLoading = true
+
+        // Valida que ningun campo obligatorio sea null, devuelve error como texto bajo los objetos y retorna
+        this.showErrorsUpdate[property.codeProperty] = true
+        const hasEmpty = this.editableFields.some((f) => !property[f.key])
+        if (hasEmpty) {
+          this.isLoading = false
+          return
+        }
+
         property.userId = userId
         const body = { ...property }
         delete body.image
@@ -560,7 +584,7 @@ export default {
         this.isLoading = true
 
         // Valida que ningun campo obligatorio sea null, devuelve error como texto bajo los objetos y retorna
-        this.showErrors = true
+        this.showErrorsAdd = true
         const hasEmpty = Object.values(this.form).some((v) => v === '' || v === null)
         if (hasEmpty) {
           this.isLoading = false
@@ -838,6 +862,11 @@ export default {
   font-size: 0.9rem;
   margin-left: 4px;
 }
+.error-msg-button {
+  color: red;
+  font-size: 0.9rem;
+  text-align: center;
+}
 .botones {
   display: flex;
   justify-content: space-between;
@@ -1094,6 +1123,13 @@ export default {
   .preview-container {
     width: 380px;
     height: 285px;
+  }
+  .error-msg-button {
+    color: red;
+    font-size: 0.9rem;
+    text-align: left;
+    margin-left: 20px;
+    margin-bottom: 5px;
   }
 }
 

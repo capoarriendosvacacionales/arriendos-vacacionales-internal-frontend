@@ -15,8 +15,6 @@ export function getDefaultForm() {
     parking: null,
     area: null,
     pool: '',
-
-    // ✅ todas las amenities en false
     internet: false,
     airConditioning: false,
     calefaction: false,
