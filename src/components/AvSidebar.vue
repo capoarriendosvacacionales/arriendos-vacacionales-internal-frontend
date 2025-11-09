@@ -38,7 +38,6 @@ export default {
   height: 180px; /* Altura total menos el margen superior */
   z-index: 1000; /* Asegura que esté sobre otros elementos */
   border-radius: 0 0 25px 25px; /* Redondea solo las esquinas inferiores */
-  border-color: #005187;
 }
 .sidebar .sidebar-content {
   top: 5px;
@@ -56,21 +55,25 @@ export default {
 }
 @media (min-width: 320px) and (max-width: 425px) {
   .oruga-sidebar {
-    width: 300px;
+    width: 280px;
+    top: 173px;
   }
   .sidebar .sidebar-content {
-    background-color: #005187;
-    width: 300px;
+    background-color: #0cc2fff6;
+    width: 280px;
+    border-radius: 25px;
   }
 }
 @media (min-width: 426px) and (max-width: 1023px) {
   .oruga-sidebar {
+    top: 173px;
+    width: 280px;
     background-color: transparent !important;
-    width: 400px;
   }
   .sidebar .sidebar-content {
-    background-color: #005187;
-    width: 400px;
+    background-color: #0cc2fff6;
+    border-radius: 25px;
+    width: 280px;
   }
 }
 </style>

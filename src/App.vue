@@ -57,4 +57,7 @@ footer {
 main {
   flex: 1;
 }
+body {
+  background: linear-gradient(to bottom, #00bfff, #87cefa, #ffc400, #ffd700);
+}
 </style>

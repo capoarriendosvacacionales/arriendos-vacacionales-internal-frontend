@@ -1,7 +1,7 @@
 <template>
   <div class="footer has-background-primary has-text-white" id="contacto-footer">
     <div class="content has-text-centered">
-      <h1 class="title">Contacto</h1>
+      <h1 class="title">Contáctanos y síguenos!</h1>
       <div class="social-icons">
         <a href="https://wa.me/56985651244" target="_blank" rel="noopener noreferrer">
           <i class="mdi mdi-whatsapp whatsapp-icon"></i>
@@ -68,22 +68,25 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
 .footer {
   width: 100%;
   padding: 20px;
-  background-color: #005187 !important;
+  background: linear-gradient(to bottom, #ffd700, #ffbb00);
   color: white;
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.2),
-    0 12px 40px rgba(0, 0, 0, 0.15);
+    0 12px 40px rgba(0, 0, 0, 0.15) !important;
 }
 .title {
-  font-family: 'Noto Sans JP', sans-serif !important;
-  font-size: 25px;
-  color: #ffcd68;
-  margin-top: 15px;
+  font-family: 'Handlee', cursive;
+  font-size: 37px;
+  font-weight: 600;
+  font-style: normal;
+  color: white;
   text-align: center;
-  font-weight: 500;
+  margin-top: 15px;
 }
 .section-parrafo {
   text-align: center;
@@ -93,7 +96,7 @@ export default {
   font-size: 18px;
 }
 .terms {
-  color: #ffcd68;
+  color: white;
   font-size: 18px;
 }
 .social-icons {
@@ -126,7 +129,7 @@ export default {
 }
 .whatsapp-icon {
   font-size: 50px;
-  color: #25d366;
+  color: white;
 }
 .email-icon {
   font-size: 50px;

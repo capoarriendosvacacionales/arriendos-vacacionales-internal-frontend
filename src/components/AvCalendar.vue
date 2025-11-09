@@ -328,7 +328,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 180px auto 0;
+  margin: 210px auto 0;
   padding: 30px;
   border-radius: 30px;
   max-width: calc(500px - 60px) !important;

@@ -8,9 +8,9 @@
     <div class="navbar-brand">
       <div class="logo-contenedor">
         <img
-          src="../assets/logoprincipalredondo.png"
+          src="/src/assets/logo-svg.svg"
           alt="Logo de Arriendos Vacacionales"
-          style="width: 190px; height: auto; padding-top: 6px"
+          style="width: 110px; height: auto; margin-top: 15px"
         />
       </div>
       <a
@@ -60,18 +60,20 @@ export default {
 .navbar.is-fixed-bottom,
 .navbar.is-fixed-top {
   box-shadow: 0px 1px 20px 1px rgba(10, 10, 10, 0.1);
-  min-height: 105px;
+  min-height: 120px;
   margin: 0 auto;
   top: 30px;
   border-radius: 25px;
-  background-color: #005187;
+  background: #0cc2fff6 !important;
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
 }
 .navbar-burger {
   margin-top: 28px;
-  margin-right: 19px;
+  margin-right: 30px;
+  background-color: transparent !important;
+  font-size: 50px;
 }
 span {
   color: white;
@@ -87,16 +89,11 @@ img {
 .navbar-item {
   background-color: transparent !important;
   color: white;
+  font-weight: 500;
   font-size: 20px;
 }
-.navbar-item:hover {
-  background-color: transparent !important;
-  color: #ffcd68 !important;
-}
 .logo-contenedor {
-  margin-left: 40px;
-  margin-top: 11px;
-  padding-right: 20px;
+  margin-left: 0px;
 }
 .logo {
   font-family: 'Inter', serif;
@@ -116,7 +113,7 @@ img {
 @media (min-width: 320px) and (max-width: 425px) {
   .navbar.is-fixed-bottom,
   .navbar.is-fixed-top {
-    max-width: 300px;
+    max-width: 280px;
   }
   .logo-contenedor {
     margin-top: 11px;
@@ -126,7 +123,7 @@ img {
 @media (min-width: 426px) and (max-width: 1023px) {
   .navbar.is-fixed-bottom,
   .navbar.is-fixed-top {
-    max-width: 400px;
+    max-width: 280px;
   }
   .logo-contenedor {
     margin-top: 11px;
@@ -136,7 +133,7 @@ img {
 @media (min-width: 1024px) {
   .navbar.is-fixed-bottom,
   .navbar.is-fixed-top {
-    max-width: 750px;
+    max-width: 580px;
   }
 }
 </style>

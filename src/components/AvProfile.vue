@@ -145,6 +145,7 @@ export default {
 <style scoped>
 .div-principal {
   margin-bottom: 30px;
+  text-align: center;
 }
 .titulo {
   font-weight: 500;
@@ -223,12 +224,18 @@ span {
   color: #fff;
   padding-top: 8px;
 }
-@media (min-width: 320px) and (max-width: 523px) {
+@media (min-width: 320px) and (max-width: 768px) {
+  .div-principal {
+    text-align: center;
+  }
   .card {
-    margin: 160px 10% 0 10%;
+    margin-top: 210px;
   }
 }
 @media (min-width: 769px) {
+  .card {
+    margin-top: 210px;
+  }
   .table-wrapper .table-inner.is-mobile td {
     width: 360px !important;
   }

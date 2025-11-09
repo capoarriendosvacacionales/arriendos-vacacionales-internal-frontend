@@ -798,7 +798,7 @@ export default {
 }
 .card-add {
   flex-direction: column;
-  margin-top: 180px;
+  margin-top: 210px;
   padding: 10px;
 }
 .add-property {
@@ -914,9 +914,6 @@ export default {
   border-radius: 11px;
   background-color: #ffbf0049;
   cursor: pointer;
-  /* box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.2),
-    0 12px 40px rgba(0, 0, 0, 0.15); */
 }
 .previews {
   display: flex;
@@ -1131,9 +1128,6 @@ export default {
     margin-left: 20px;
     margin-bottom: 5px;
   }
-}
-
-@media screen and (min-width: 769px) {
   .div-label {
     width: 100%;
   }

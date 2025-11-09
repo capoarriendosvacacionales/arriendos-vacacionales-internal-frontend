@@ -115,7 +115,7 @@ section {
   width: 100%;
   max-width: 500px;
   color: white;
-  background-color: #027cce;
+  background-color: #0580a9;
   font-size: 18px;
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.2),
