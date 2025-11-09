@@ -17,7 +17,47 @@
         <p class="mb-1">Password</p>
         <input class="input" type="password" placeholder="Password" v-model="password" required />
         <o-button label="Iniciar sesión" class="boton" @click="login" />
-        <o-button label="Crear cuenta" class="boton-crear-cuenta" />
+        <o-button
+          label="Crear cuenta"
+          class="boton-crear-cuenta"
+          @click="createAccount(crearCuenta)"
+        />
+        <div v-if="crearCuenta" class="create-user">
+          <p class="pb-2">Correo eletrónico:</p>
+          <input
+            class="input mb-3"
+            type="email"
+            placeholder="Ejemplo: correo@ejemplo.com"
+            required
+          />
+          <p class="pb-2">Fono:</p>
+          <input class="input mb-3" type="text" placeholder="Ejemplo: +56912345678" required />
+          <p class="pb-2">Nombres:</p>
+          <input class="input mb-3" type="text" placeholder="" required />
+          <p class="pb-2">Apellidos:</p>
+          <input class="input mb-3" type="text" placeholder="" required />
+          <p class="pb-2">RUT/Pasaporte:</p>
+          <input class="input mb-3" type="text" placeholder="" required />
+          <p class="pb-2">Dirección:</p>
+          <input class="input mb-3" type="text" placeholder="" required />
+          <p class="pb-2">Comuna:</p>
+          <select>
+            <option value="chile" class="option">Chile</option>
+          </select>
+          <p class="pb-2">Ciudad:</p>
+          <select>
+            <option value="chile" class="option">Chile</option>
+          </select>
+          <p class="pb-2">País:</p>
+          <select>
+            <option value="chile" class="option">Chile</option>
+          </select>
+          <p class="pb-2">Ingresa tu contraseña</p>
+          <input class="input mb-3" type="password" placeholder="" required />
+          <p class="pb-2">Repite tu contraseña</p>
+          <input class="input mb-3" type="password" placeholder="" required />
+          <o-button label="Crear!" class="boton-crear-cuenta" />
+        </div>
       </div>
       <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
         <div
@@ -52,6 +92,7 @@ export default {
       isLoading: false,
       tituloMensajeModal: null,
       isFullPage: false,
+      crearCuenta: false,
     }
   },
   methods: {
@@ -80,6 +121,10 @@ export default {
     closeModal() {
       this.isCardModalActive = false
     },
+    createAccount() {
+      this.crearCuenta = !this.crearCuenta
+      console.log(this.crearCuenta)
+    },
   },
 }
 </script>
@@ -89,9 +134,7 @@ section {
   background: linear-gradient(to bottom, #00bfff, #27c6fa, #ffc400, #ffd700);
 }
 .div-principal {
-  padding-top: 100px;
-  padding-left: 30px;
-  padding-right: 30px;
+  padding: 100px 30px 50px 30px;
 }
 .card {
   margin: 0px auto 0;
@@ -163,5 +206,22 @@ section {
   font-weight: 500;
   color: #fff;
   padding-top: 8px;
+}
+.create-user {
+  margin-top: 10px;
+  padding: 20px;
+  background-color: rgba(206, 145, 236, 0.487);
+}
+select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #c0a6e3;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #333;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  appearance: none;
 }
 </style>
