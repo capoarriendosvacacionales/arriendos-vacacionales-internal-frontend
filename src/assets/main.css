@@ -69,6 +69,12 @@ body {
   margin: 1px 0 0 10px;
 }
 
+.tooltip .tooltip-content.is-multiline {
+  /* white-space: normal !important; */
+  /* word-break: break-word !important; */
+  width: 200px;
+}
+
 /* @media screen and (max-width: 768px) {
   .table-wrapper .table-inner.is-mobile .table {
     width: 100%;

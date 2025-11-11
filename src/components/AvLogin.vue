@@ -30,7 +30,18 @@
             </p>
           </div>
           <div v-for="field in fields" :key="field.key" class="mb-3">
-            <p class="mt-2 mb-1 ml-1">{{ field.label }}</p>
+            <p class="mt-2 mb-1 ml-1">
+              <o-tooltip
+                v-if="field.key === 'password1'"
+                label="La contraseña debe contener 8 dígitos o más, deben ser alphanumericos y tener 1 caracter especial"
+                :teleport="teleport"
+                position="right"
+                multiline
+              >
+                <i class="mdi mdi-information custom-icon"></i>
+              </o-tooltip>
+              {{ field.label }}
+            </p>
 
             <o-input
               v-if="field.type !== 'select'"
@@ -48,6 +59,19 @@
 
             <p v-if="showErrorsAdd && !user[field.key]" class="error-msg">
               Debes completar este campo
+            </p>
+            
+            <p
+              v-if="
+                showErrorsAdd &&
+                field.key === 'password2' &&
+                user.password1 &&
+                user.password2 &&
+                user.password1 !== user.password2
+              "
+              class="error-msg"
+            >
+              Las contraseñas deben ser iguales
             </p>
           </div>
           <o-button label="Crear!" class="boton-crear-cuenta" @click.prevent="createUser" />
@@ -144,7 +168,7 @@ section {
   background: linear-gradient(to bottom, #00bfff, #27c6fa, #ffc400, #ffd700);
 }
 .div-principal {
-  padding: 100px 30px 50px 30px;
+  padding: 70px 30px 50px 30px;
 }
 .card {
   margin: 0px auto 0;
@@ -250,5 +274,11 @@ select {
   color: red;
   font-size: 0.9rem;
   margin-left: 4px;
+}
+.custom-icon {
+  font-size: 20px;
+}
+.tooltip .tooltip-content.is-right.is-multiline {
+  width: 200px !important;
 }
 </style>
