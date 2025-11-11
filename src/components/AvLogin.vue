@@ -23,40 +23,34 @@
           @click="createAccount(crearCuenta)"
         />
         <div v-if="crearCuenta" class="create-user">
-          <p class="pb-2">Correo eletrónico:</p>
-          <input
-            class="input mb-3"
-            type="email"
-            placeholder="Ejemplo: correo@ejemplo.com"
-            required
-          />
-          <p class="pb-2">Fono:</p>
-          <input class="input mb-3" type="text" placeholder="Ejemplo: +56912345678" required />
-          <p class="pb-2">Nombres:</p>
-          <input class="input mb-3" type="text" placeholder="" required />
-          <p class="pb-2">Apellidos:</p>
-          <input class="input mb-3" type="text" placeholder="" required />
-          <p class="pb-2">RUT/Pasaporte:</p>
-          <input class="input mb-3" type="text" placeholder="" required />
-          <p class="pb-2">Dirección:</p>
-          <input class="input mb-3" type="text" placeholder="" required />
-          <p class="pb-2">Comuna:</p>
-          <select>
-            <option value="chile" class="option">Chile</option>
-          </select>
-          <p class="pb-2">Ciudad:</p>
-          <select>
-            <option value="chile" class="option">Chile</option>
-          </select>
-          <p class="pb-2">País:</p>
-          <select>
-            <option value="chile" class="option">Chile</option>
-          </select>
-          <p class="pb-2">Ingresa tu contraseña</p>
-          <input class="input mb-3" type="password" placeholder="" required />
-          <p class="pb-2">Repite tu contraseña</p>
-          <input class="input mb-3" type="password" placeholder="" required />
-          <o-button label="Crear!" class="boton-crear-cuenta" />
+          <div class="disclaimer">
+            <p>
+              Importante! Debes completar tus datos de manera fidedigna. Serán importantes para
+              mantener nuestra comunicación contigo y concretar los pagos.
+            </p>
+          </div>
+          <div v-for="field in fields" :key="field.key" class="mb-3">
+            <p class="mt-2 mb-1 ml-1">{{ field.label }}</p>
+
+            <o-input
+              v-if="field.type !== 'select'"
+              :id="field.key"
+              v-model="user[field.key]"
+              :type="field.type"
+              expanded
+            />
+
+            <o-select v-else v-model="user[field.key]" expanded>
+              <option v-for="option in field.options" :key="option.value" :value="option.label">
+                {{ option.label }}
+              </option>
+            </o-select>
+
+            <p v-if="showErrorsAdd && !user[field.key]" class="error-msg">
+              Debes completar este campo
+            </p>
+          </div>
+          <o-button label="Crear!" class="boton-crear-cuenta" @click.prevent="createUser" />
         </div>
       </div>
       <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
@@ -80,6 +74,9 @@
 </template>
 <script>
 import axios from 'axios'
+import { userFields } from '@/assets/users'
+import { getDefaultUser } from '@/assets/get-default-user'
+
 export default {
   name: 'AvLogin',
   data() {
@@ -93,9 +90,23 @@ export default {
       tituloMensajeModal: null,
       isFullPage: false,
       crearCuenta: false,
+      fields: userFields,
+      user: getDefaultUser(),
+      showErrorsAdd: false,
     }
   },
   methods: {
+    createUser() {
+      this.isLoading = true
+      // Valida que ningun campo obligatorio sea null, devuelve error como texto bajo los objetos y retorna
+      this.showErrorsAdd = true
+      const hasEmpty = Object.values(this.user).some((v) => v === '' || v === null)
+      if (hasEmpty) {
+        this.isLoading = false
+        return
+      }
+      this.isLoading = false
+    },
     async login() {
       try {
         this.isLoading = true
@@ -123,7 +134,6 @@ export default {
     },
     createAccount() {
       this.crearCuenta = !this.crearCuenta
-      console.log(this.crearCuenta)
     },
   },
 }
@@ -141,6 +151,18 @@ section {
   padding: 30px;
   border-radius: 30px;
   max-width: calc(500px - 60px) !important;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
+.disclaimer {
+  margin: 0 auto;
+  padding: 10px;
+  margin-bottom: 20px;
+  text-align: justify;
+  font-size: 14px;
+  background-color: hsla(56, 100%, 57%, 0.452);
+  border-radius: 5px;
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
@@ -210,7 +232,7 @@ section {
 .create-user {
   margin-top: 10px;
   padding: 20px;
-  background-color: rgba(206, 145, 236, 0.487);
+  background-color: rgba(219, 185, 236, 0.487);
 }
 select {
   width: 100%;
@@ -223,5 +245,10 @@ select {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   appearance: none;
+}
+.error-msg {
+  color: red;
+  font-size: 0.9rem;
+  margin-left: 4px;
 }
 </style>
