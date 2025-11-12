@@ -12,7 +12,7 @@ export const userFields = [
   { key: 'phone', label: 'Fono:', type: 'email' },
   { key: 'firstName', label: 'Nombres:', type: 'text' },
   { key: 'lastName', label: 'Apellidos:', type: 'text' },
-  { key: 'brithDate', label: 'Fecha de nacimiento:', type: 'date' },
+  { key: 'birthDate', label: 'Fecha de nacimiento:', type: 'date' },
   { key: 'dni', label: 'RUT/Pasaporte:', type: 'text' },
   { key: 'address', label: 'Dirección:', type: 'text' },
   { key: 'municipality', label: 'Comuna:', type: 'select', options: listMunicipalities },

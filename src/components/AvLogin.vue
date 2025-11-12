@@ -34,7 +34,6 @@
               <o-tooltip
                 v-if="field.key === 'password1'"
                 label="La contraseña debe contener 8 dígitos o más, deben ser alphanumericos y tener 1 caracter especial"
-                :teleport="teleport"
                 position="right"
                 multiline
               >
@@ -60,7 +59,7 @@
             <p v-if="showErrorsAdd && !user[field.key]" class="error-msg">
               Debes completar este campo
             </p>
-            
+
             <p
               v-if="
                 showErrorsAdd &&
@@ -71,25 +70,66 @@
               "
               class="error-msg"
             >
-              Las contraseñas deben ser iguales
+              Las contraseñas deben ser iguales y con formato válido
             </p>
           </div>
-          <o-button label="Crear!" class="boton-crear-cuenta" @click.prevent="createUser" />
+          <o-button class="boton-crear-cuenta" :disabled="isLoading" @click.prevent="createUser">
+            {{ isLoading ? 'Procesando…' : 'Crear cuenta' }}
+          </o-button>
         </div>
       </div>
       <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
         <div
           class="notification"
           :style="{
-            'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)',
+            'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : customBackgroundColor,
           }"
         >
           <div class="container-modal">
-            <h1 class="titulo-modal">{{ tituloMensajeModal }}</h1>
-            <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
+            <h1
+              class="titulo-modal"
+              :style="{
+                /* 'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : '#fff', */
+                color: error ? '#fff' : customTextColor,
+              }"
+            >
+              {{ tituloMensajeModal }}
+            </h1>
+            <i
+              class="mdi mdi-close-circle-outline mdi-close"
+              :style="{
+                /* 'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : '#fff', */
+                color: error ? '#fff' : customTextColor,
+              }"
+              @click="closeModal()"
+            ></i>
           </div>
-          <div>
-            <p class="notification-detail">{{ error ? error : ok }}</p>
+          <div class="p-4">
+            <p
+              class="notification-detail"
+              :style="{
+                /* 'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : '#fff', */
+                color: error ? '#fff' : customTextColor,
+              }"
+            >
+              {{ error ? error : ok }}
+            </p>
+            <o-input
+              v-if="code === true"
+              v-model="confirmationCode"
+              type="text"
+              expanded
+              required
+              class="input-code"
+            />
+            <o-button
+              v-if="code === true"
+              class="boton-crear-cuenta"
+              :disabled="isLoading"
+              @click.prevent="confirmUser"
+            >
+              {{ isLoading ? 'Procesando…' : 'Confirmar usuario' }}
+            </o-button>
           </div>
         </div>
       </o-modal>
@@ -117,19 +157,140 @@ export default {
       fields: userFields,
       user: getDefaultUser(),
       showErrorsAdd: false,
+      code: false,
+      confirmationCode: null,
+      customBackgroundColor: null,
+      customTextColor: null,
     }
   },
   methods: {
-    createUser() {
-      this.isLoading = true
-      // Valida que ningun campo obligatorio sea null, devuelve error como texto bajo los objetos y retorna
-      this.showErrorsAdd = true
-      const hasEmpty = Object.values(this.user).some((v) => v === '' || v === null)
-      if (hasEmpty) {
+    async createUser() {
+      try {
+        this.isLoading = true
+        this._resetNotices() // limpia mensajes previos
+        this.showErrorsAdd = true // activa validación visual
+
+        // 1️⃣ Validación de campos vacíos
+        const hasEmpty = Object.values(this.user).some((v) => v === '' || v === null)
+        if (hasEmpty) {
+          this.isLoading = false
+          this.major = 'Completa todos los campos obligatorios.'
+          this.isCardModalActive = true
+          this.tituloMensajeModal = 'Importante'
+          this.error = 'Completa todos los campos obligatorios'
+          return
+        }
+
+        // 2️⃣ Validación de coincidencia de contraseñas
+        if (this.user.password1 !== this.user.password2) {
+          this.isLoading = false
+          this.isCardModalActive = true
+          this.tituloMensajeModal = 'Error'
+          this.error = 'Las contraseñas no coinciden.'
+          return
+        }
+
+        // 3️⃣ Validación de formato de contraseña
+        const passwordRegex =
+          /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{}\]:;'",.<>/?|`~]).{8,}$/
+
+        if (!passwordRegex.test(this.user.password1)) {
+          this.isLoading = false
+          this.isCardModalActive = true
+          this.tituloMensajeModal = 'Error'
+          this.error =
+            'La contraseña debe comenzar con una mayúscula, tener al menos 8 caracteres, incluir letras, números y un carácter especial.'
+          return
+        }
+
+        // 4️⃣ Envío al backend
+        const body = { ...this.user }
+
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_POST_CREATE_USER}`, body)
+
+        // Normaliza el "ok" del backend: admite boolean suelto o { ok: boolean }
+        const okFlag = typeof response.data === 'boolean' ? response.data : !!response.data?.ok
+
+        if (!okFlag) {
+          // Opcional: toma mensaje del backend si existe
+          const msg =
+            response.data?.message ||
+            'Las contraseñas no coinciden o la contraseña no cumple el formato.'
+          this.isLoading = false
+          this.isCardModalActive = true
+          this.tituloMensajeModal = 'Error'
+          this.error = msg // 🔹 llena solo "error"
+          return
+        }
+
+        // Éxito
         this.isLoading = false
-        return
+        this.isCardModalActive = true
+        this.tituloMensajeModal = 'Importante'
+        this.code = true
+        this.customBackgroundColor = '#fff'
+        this.customTextColor = '#404654'
+        this.ok =
+          'Te enviamos un código a tu correo electrónico. Debes ingresarlo acá para confirmar tu cuenta:'
+        this._resetForm() // ahora sí limpia el formulario (y apaga showErrorsAdd)
+        this.createAccount(this.crearCuenta)
+      } catch (error) {
+        this.isLoading = false
+        this.isCardModalActive = true
+        this.tituloMensajeModal = 'Error'
+        this.error = error
       }
-      this.isLoading = false
+    },
+    async confirmUser() {
+      try {
+        this.isLoading = true
+
+        // 1️⃣ Validación de campo vacío
+        if (this.confirmationCode === null || this.confirmationCode === '') {
+          this.isLoading = false
+          this.isCardModalActive = true
+          this.code = true
+          this.tituloMensajeModal = 'Importante'
+          this.error = 'Debes ingresar el código enviado a tu correo electrónico'
+          return
+        }
+
+        // 2️⃣ Envío al backend
+        const body = { ...this.confirmationCode }
+
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_POST_CONFIRM_USER}`, body)
+
+        // Normaliza el "ok" del backend: admite boolean suelto o { ok: boolean }
+        const okFlag = typeof response.data === 'boolean' ? response.data : !!response.data?.ok
+
+        if (!okFlag) {
+          // Opcional: toma mensaje del backend si existe
+          const msg = response.data?.message || 'El código no es válido'
+          this.isLoading = false
+          this.isCardModalActive = true
+          this.tituloMensajeModal = 'Error'
+          this.error = msg // Llena solo "error"
+          return
+        }
+
+        // Éxito
+        this.isLoading = false
+        this.error = false
+        this.isCardModalActive = true
+        this.tituloMensajeModal = 'Importante'
+        this.code = true
+        this.customBackgroundColor = 'hsl(117, 81%, 34%)'
+        this.customTextColor = '#fff'
+        this.ok = 'Perfecto! Ya puedes iniciar sesión en nuestro sitio y publicar tu propiedad!'
+        this.code = false
+        this.confirmationCode = null
+        this._resetForm() // ahora sí limpia el formulario (y apaga showErrorsAdd)
+      } catch (error) {
+        this.isLoading = false
+        this.isCardModalActive = true
+        this.tituloMensajeModal = 'Error'
+        this.error = error
+      }
     },
     async login() {
       try {
@@ -155,9 +316,19 @@ export default {
     },
     closeModal() {
       this.isCardModalActive = false
+      this._resetNotices() // 🔹 limpia ok/error/major
     },
     createAccount() {
       this.crearCuenta = !this.crearCuenta
+    },
+    _resetNotices() {
+      this.ok = null
+      this.error = null
+      this.major = null
+    },
+    _resetForm() {
+      this.user = getDefaultUser() // tu factory actual
+      this.showErrorsAdd = false
     },
   },
 }
@@ -222,11 +393,15 @@ section {
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
 }
+.input-code {
+  width: 90%;
+}
 .notification {
   padding: 0;
   padding-bottom: 3px;
   border-radius: 30px;
   text-align: center;
+  /* background-color: #0580a9; */
 }
 .notification-detail {
   color: #fff;
