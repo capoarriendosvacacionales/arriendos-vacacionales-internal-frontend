@@ -4,9 +4,11 @@
     <AvNavbar />
     <AvSidebar v-if="!menuState.menuState" />
   </header>
-  <main>
+
+  <main class="app-background">
     <router-view :key="$route.path"></router-view>
   </main>
+
   <footer v-if="$route.meta.layout !== 'auth'">
     <AvFooter />
   </footer>
@@ -27,37 +29,39 @@ export default {
   },
   setup() {
     const menuState = useMenuStateInStore()
-    return {
-      menuState,
-    }
+    return { menuState }
   },
 }
 </script>
 
 <style>
-/* Aseguramos que html, body y el contenedor principal ocupen el 100% de la altura */
 html,
 body,
 #app {
   height: 100%;
   margin: 0;
 }
-/* Convertimos el contenedor principal en flex con dirección de columna */
+
 #app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
-/* El header y footer ocupan su altura natural */
+
 header,
 footer {
   flex-shrink: 0;
 }
-/* El main se expande para ocupar el espacio restante */
-main {
+
+/* 🔹 Fondo global */
+.app-background {
   flex: 1;
-}
-body {
   background: linear-gradient(to bottom, #00bfff, #87cefa, #ffc400, #ffd700);
+  background-attachment: fixed; /* 🔹 No se mueve al hacer scroll */
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>

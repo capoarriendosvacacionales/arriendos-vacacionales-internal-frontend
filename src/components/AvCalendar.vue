@@ -194,10 +194,7 @@ export default {
 
       this.onDateChange(this.dateSelected)
       this.isLoading = false
-    } catch (error) {
-      this.isErrorCardModalActive = true
-      this.error = error
-      this.tituloMensajeModal = 'Error'
+    } catch {
       this.isLoading = false
     }
   },

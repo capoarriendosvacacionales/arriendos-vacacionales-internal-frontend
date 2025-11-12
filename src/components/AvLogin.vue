@@ -161,6 +161,7 @@ export default {
       confirmationCode: null,
       customBackgroundColor: null,
       customTextColor: null,
+      email: null,
     }
   },
   methods: {
@@ -206,6 +207,8 @@ export default {
         // 4️⃣ Envío al backend
         const body = { ...this.user }
 
+        console.log(body)
+
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_POST_CREATE_USER}`, body)
 
         // Normaliza el "ok" del backend: admite boolean suelto o { ok: boolean }
@@ -225,6 +228,7 @@ export default {
 
         // Éxito
         this.isLoading = false
+        this.email = this.user.email
         this.isCardModalActive = true
         this.tituloMensajeModal = 'Importante'
         this.code = true
@@ -256,7 +260,7 @@ export default {
         }
 
         // 2️⃣ Envío al backend
-        const body = { ...this.confirmationCode }
+        const body = { email: this.email, verficationUser: this.confirmationCode }
 
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_POST_CONFIRM_USER}`, body)
 

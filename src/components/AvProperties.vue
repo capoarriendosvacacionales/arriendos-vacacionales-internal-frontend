@@ -1,337 +1,332 @@
 <template>
-  <section>
-    <section class="card card-add card-table">
-      <div class="titulo-add">
-        <h1 class="titulo">Agregar nueva propiedad</h1>
-        <i
-          v-show="!openOrClose"
-          class="mdi mdi-plus-circle mdi-36px"
-          @click="openOrCloseAddProperty(!openOrClose)"
-        ></i>
-        <i
-          v-show="openOrClose"
-          class="mdi mdi-minus-circle mdi-36px"
-          @click="openOrCloseAddProperty(!openOrClose)"
-        ></i>
+  <div class="card card-add card-table">
+    <div class="titulo-add">
+      <h1 class="titulo">Agregar nueva propiedad</h1>
+      <i
+        v-show="!openOrClose"
+        class="mdi mdi-plus-circle mdi-36px"
+        @click="openOrCloseAddProperty(!openOrClose)"
+      ></i>
+      <i
+        v-show="openOrClose"
+        class="mdi mdi-minus-circle mdi-36px"
+        @click="openOrCloseAddProperty(!openOrClose)"
+      ></i>
+    </div>
+    <div v-show="openOrClose" class="add-property">
+      <div class="disclaimer">
+        <p>
+          Importante! Si no subes al menos una imagen de tu propiedad, la misma quedará
+          despublicada. Sin embargo, podrás publicarla modificándola y subiendo una o más imágenes.
+        </p>
       </div>
-      <div v-show="openOrClose" class="add-property">
-        <div class="disclaimer">
-          <p>
-            Importante! Si no subes al menos una imagen de tu propiedad, la misma quedará
-            despublicada. Sin embargo, podrás publicarla modificándola y subiendo una o más
-            imágenes.
-          </p>
+      <div v-for="field in fields" :key="field.key" class="mb-3">
+        <p class="mt-2 mb-1 ml-1">{{ field.label }}</p>
+
+        <o-input
+          v-if="field.type !== 'select'"
+          v-model="form[field.key]"
+          :type="field.type"
+          expanded
+        />
+
+        <o-select v-else v-model="form[field.key]" expanded>
+          <option v-for="option in field.options" :key="option.value" :value="option.label">
+            {{ option.label }}
+          </option>
+        </o-select>
+
+        <p v-if="showErrorsAdd && !form[field.key]" class="error-msg">Debes completar este campo</p>
+      </div>
+      <table class="mt-1">
+        <tbody>
+          <tr v-for="item in amenities" :key="item.key">
+            <td class="td-table pl-1 pt-2">{{ item.label }}</td>
+            <td>
+              <o-checkbox style="position: absolute; right: 0" v-model="form[item.key]" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <section>
+        <section class="upload-photo">
+          <o-field>
+            <o-upload class="upload" multiple @change="handleFileUpload">
+              <div style="text-align: center">
+                <p>
+                  <o-icon icon="upload" size="is-large" />
+                </p>
+                <p>Haz click aquí para subir tus fotos</p>
+              </div>
+            </o-upload>
+          </o-field>
+        </section>
+        <section class="previews">
+          <div v-for="(file, index) in previewFiles" :key="index" class="preview-container">
+            <img :src="file.url" alt="Vista previa de la imagen" class="preview-img" />
+            <button @click="removeImage(index)" class="boton-vistaprevia">X</button>
+          </div>
+        </section>
+        <div class="div-boton">
+          <o-button class="guardar" @click.prevent="uploadProperty">Guardar</o-button>
         </div>
-        <div v-for="field in fields" :key="field.key" class="mb-3">
-          <p class="mt-2 mb-1 ml-1">{{ field.label }}</p>
+        <p
+          v-if="showErrorsAdd && Object.values(form).some((v) => v === '' || v === null)"
+          class="error-msg has-text-centered"
+        >
+          Debes completar todos los campos obligatorios
+        </p>
+        <o-loading v-model:active="isLoading" :full-page="isFullPage">
+          <i class="mdi mdi-reload mdi-36px" style="color: transparent"></i>
+        </o-loading>
+      </section>
+    </div>
+  </div>
+  <div class="card card-table mb-6">
+    <div style="width: 100%">
+      <div class="div-title">
+        <h1 class="titulo mb-2 mt-3">Mis propiedades</h1>
+      </div>
+      <o-table
+        :data="isEmpty ? [] : myProperties"
+        :striped="isStriped"
+        :narrowed="isNarrowed"
+        :hoverable="isHoverable"
+        :mobile-cards="hasMobileCards"
+        :paginated="isPaginated"
+        :per-page="perPage"
+        :custom-detail-row="!showDefaultDetail"
+        :show-detail-icon="showDetailIcon"
+        row-key="codeProperty"
+        detailed
+      >
+        <o-table-column
+          v-slot="{ row }"
+          field="codeProperty"
+          label="Código"
+          sortable
+          style="width: 200px !important"
+        >
+          {{ row.codeProperty }}
+        </o-table-column>
 
-          <o-input
-            v-if="field.type !== 'select'"
-            v-model="form[field.key]"
-            :type="field.type"
-            expanded
-          />
+        <o-table-column
+          v-slot="{ row }"
+          field="address"
+          label="Dirección"
+          sortable
+          style="width: 200px !important"
+        >
+          {{ row.address }}
+        </o-table-column>
 
-          <o-select v-else v-model="form[field.key]" expanded>
-            <option v-for="option in field.options" :key="option.value" :value="option.label">
-              {{ option.label }}
-            </option>
-          </o-select>
+        <o-table-column
+          v-slot="{ row }"
+          field="municipality"
+          label="Comuna"
+          sortable
+          style="width: 200px !important"
+        >
+          {{ row.municipality }}
+        </o-table-column>
 
-          <p v-if="showErrorsAdd && !form[field.key]" class="error-msg">
-            Debes completar este campo
-          </p>
-        </div>
-        <table class="mt-1">
-          <tbody>
-            <tr v-for="item in amenities" :key="item.key">
-              <td class="td-table pl-1 pt-2">{{ item.label }}</td>
-              <td>
-                <o-checkbox style="position: absolute; right: 0" v-model="form[item.key]" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <section>
-          <section class="upload-photo">
-            <o-field>
-              <o-upload class="upload" multiple @change="handleFileUpload">
-                <div style="text-align: center">
-                  <p>
-                    <o-icon icon="upload" size="is-large" />
-                  </p>
-                  <p>Haz click aquí para subir tus fotos</p>
-                </div>
-              </o-upload>
-            </o-field>
-          </section>
-          <section class="previews">
-            <div v-for="(file, index) in previewFiles" :key="index" class="preview-container">
-              <img :src="file.url" alt="Vista previa de la imagen" class="preview-img" />
-              <button @click="removeImage(index)" class="boton-vistaprevia">X</button>
+        <o-table-column
+          v-slot="{ row }"
+          field="resortTown"
+          label="Ciudad"
+          sortable
+          style="width: 200px !important"
+        >
+          {{ row.resortTown }}
+        </o-table-column>
+
+        <o-table-column
+          v-slot="{ row }"
+          field="region"
+          label="Región"
+          sortable
+          style="width: 200px !important"
+        >
+          {{ row.region }}
+        </o-table-column>
+
+        <o-table-column
+          v-slot="{ row }"
+          field="country"
+          label="País"
+          sortable
+          style="width: 200px !important"
+        >
+          {{ row.country }}
+        </o-table-column>
+
+        <template #detail="{ row }">
+          <td class="divisor">
+            <!-- Campos editables dinámicos -->
+            <div v-for="field in editableFields" :key="field.key" class="div-label">
+              <p class="mt-2 mb-1 ml-1 label">{{ field.label }}</p>
+
+              <!-- Input normal -->
+              <input
+                v-if="field.type === 'text' || field.type === 'number'"
+                class="input"
+                :type="field.type"
+                v-model="row[field.key]"
+              />
+
+              <!-- Select -->
+              <o-select
+                v-else-if="field.type === 'select'"
+                class="input-select"
+                expanded
+                v-model="row[field.key]"
+              >
+                <option v-for="option in field.options" :key="option.value" :value="option.value">
+                  {{ option.label }}
+                </option>
+              </o-select>
+              <p
+                v-if="showErrorsUpdate && (row[field.key] === '' || row[field.key] === null)"
+                class="error-msg"
+              >
+                Debes completar este campo
+              </p>
+            </div>
+
+            <!-- Checkboxes dinámicos -->
+            <table class="amenities-table">
+              <tbody>
+                <tr v-for="amenity in amenities" :key="amenity.key">
+                  <td class="td-table pt-3">{{ amenity.label }}</td>
+                  <td><o-checkbox v-model="row[amenity.key]" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+
+          <!-- Sección: Eliminar fotos -->
+          <section class="borde">
+            <div class="contenedor-subtitulo">
+              <div class="titulo-photos">
+                <h1 class="title-photos">Eliminar fotos</h1>
+                <i
+                  v-show="!openOrCloseDelImages"
+                  class="mdi mdi-plus-circle mdi-36px"
+                  @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
+                ></i>
+                <i
+                  v-show="openOrCloseDelImages"
+                  class="mdi mdi-minus-circle mdi-36px"
+                  @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
+                ></i>
+              </div>
+            </div>
+
+            <div v-show="openOrCloseDelImages" class="image-container">
+              <div v-for="(file, index) in row.image" :key="index" class="preview-photos">
+                <img :src="file.signedUrl" alt="Vista previa" class="preview-img2" />
+                <button @click="removeImageToDelete(row, index)" class="boton-vistaprevia2">
+                  Eliminar
+                </button>
+              </div>
             </div>
           </section>
-          <div class="div-boton">
-            <o-button class="guardar" @click.prevent="uploadProperty">Guardar</o-button>
-          </div>
-          <p
-            v-if="showErrorsAdd && Object.values(form).some((v) => v === '' || v === null)"
-            class="error-msg has-text-centered"
-          >
-            Debes completar todos los campos obligatorios
-          </p>
-          <o-loading v-model:active="isLoading" :full-page="isFullPage">
-            <i class="mdi mdi-reload mdi-36px" style="color: transparent"></i>
-          </o-loading>
-        </section>
-      </div>
-    </section>
-    <section class="card card-table mb-6">
-      <div style="width: 100%">
-        <div class="div-title">
-          <h1 class="titulo mb-2 mt-3">Mis propiedades</h1>
-        </div>
-        <o-table
-          :data="isEmpty ? [] : myProperties"
-          :striped="isStriped"
-          :narrowed="isNarrowed"
-          :hoverable="isHoverable"
-          :mobile-cards="hasMobileCards"
-          :paginated="isPaginated"
-          :per-page="perPage"
-          :custom-detail-row="!showDefaultDetail"
-          :show-detail-icon="showDetailIcon"
-          row-key="codeProperty"
-          detailed
-        >
-          <o-table-column
-            v-slot="{ row }"
-            field="codeProperty"
-            label="Código"
-            sortable
-            style="width: 200px !important"
-          >
-            {{ row.codeProperty }}
-          </o-table-column>
 
-          <o-table-column
-            v-slot="{ row }"
-            field="address"
-            label="Dirección"
-            sortable
-            style="width: 200px !important"
-          >
-            {{ row.address }}
-          </o-table-column>
-
-          <o-table-column
-            v-slot="{ row }"
-            field="municipality"
-            label="Comuna"
-            sortable
-            style="width: 200px !important"
-          >
-            {{ row.municipality }}
-          </o-table-column>
-
-          <o-table-column
-            v-slot="{ row }"
-            field="resortTown"
-            label="Ciudad"
-            sortable
-            style="width: 200px !important"
-          >
-            {{ row.resortTown }}
-          </o-table-column>
-
-          <o-table-column
-            v-slot="{ row }"
-            field="region"
-            label="Región"
-            sortable
-            style="width: 200px !important"
-          >
-            {{ row.region }}
-          </o-table-column>
-
-          <o-table-column
-            v-slot="{ row }"
-            field="country"
-            label="País"
-            sortable
-            style="width: 200px !important"
-          >
-            {{ row.country }}
-          </o-table-column>
-
-          <template #detail="{ row }">
-            <td class="divisor">
-              <!-- Campos editables dinámicos -->
-              <div v-for="field in editableFields" :key="field.key" class="div-label">
-                <p class="mt-2 mb-1 ml-1 label">{{ field.label }}</p>
-
-                <!-- Input normal -->
-                <input
-                  v-if="field.type === 'text' || field.type === 'number'"
-                  class="input"
-                  :type="field.type"
-                  v-model="row[field.key]"
-                />
-
-                <!-- Select -->
-                <o-select
-                  v-else-if="field.type === 'select'"
-                  class="input-select"
-                  expanded
-                  v-model="row[field.key]"
-                >
-                  <option v-for="option in field.options" :key="option.value" :value="option.value">
-                    {{ option.label }}
-                  </option>
-                </o-select>
-                <p
-                  v-if="showErrorsUpdate && (row[field.key] === '' || row[field.key] === null)"
-                  class="error-msg"
-                >
-                  Debes completar este campo
-                </p>
+          <!-- Sección: Agregar fotos -->
+          <section class="borde">
+            <div class="contenedor-subtitulo">
+              <div class="titulo-photos">
+                <h1 class="title-photos">Agregar fotos</h1>
+                <i
+                  v-show="!openOrCloseAImages"
+                  class="mdi mdi-plus-circle mdi-36px"
+                  @click="openOrCloseAddImages(!openOrCloseAImages)"
+                ></i>
+                <i
+                  v-show="openOrCloseAImages"
+                  class="mdi mdi-minus-circle mdi-36px"
+                  @click="openOrCloseAddImages(!openOrCloseAImages)"
+                ></i>
               </div>
+            </div>
 
-              <!-- Checkboxes dinámicos -->
-              <table class="amenities-table">
-                <tbody>
-                  <tr v-for="amenity in amenities" :key="amenity.key">
-                    <td class="td-table pt-3">{{ amenity.label }}</td>
-                    <td><o-checkbox v-model="row[amenity.key]" /></td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-
-            <!-- Sección: Eliminar fotos -->
-            <section class="borde">
-              <div class="contenedor-subtitulo">
-                <div class="titulo-photos">
-                  <h1 class="title-photos">Eliminar fotos</h1>
-                  <i
-                    v-show="!openOrCloseDelImages"
-                    class="mdi mdi-plus-circle mdi-36px"
-                    @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
-                  ></i>
-                  <i
-                    v-show="openOrCloseDelImages"
-                    class="mdi mdi-minus-circle mdi-36px"
-                    @click="openOrCloseDeleteImages(!openOrCloseDelImages)"
-                  ></i>
-                </div>
-              </div>
-
-              <div v-show="openOrCloseDelImages" class="image-container">
-                <div v-for="(file, index) in row.image" :key="index" class="preview-photos">
-                  <img :src="file.signedUrl" alt="Vista previa" class="preview-img2" />
-                  <button @click="removeImageToDelete(row, index)" class="boton-vistaprevia2">
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            <!-- Sección: Agregar fotos -->
-            <section class="borde">
-              <div class="contenedor-subtitulo">
-                <div class="titulo-photos">
-                  <h1 class="title-photos">Agregar fotos</h1>
-                  <i
-                    v-show="!openOrCloseAImages"
-                    class="mdi mdi-plus-circle mdi-36px"
-                    @click="openOrCloseAddImages(!openOrCloseAImages)"
-                  ></i>
-                  <i
-                    v-show="openOrCloseAImages"
-                    class="mdi mdi-minus-circle mdi-36px"
-                    @click="openOrCloseAddImages(!openOrCloseAImages)"
-                  ></i>
-                </div>
-              </div>
-
-              <div v-show="openOrCloseAImages" class="image-container2">
-                <section class="upload-photo">
-                  <o-field>
-                    <o-upload class="upload" multiple @change="handleFileUploadToModify">
-                      <div style="text-align: center">
-                        <p><o-icon icon="upload" size="is-large" /></p>
-                        <p>Haz click aquí para subir tus fotos</p>
-                      </div>
-                    </o-upload>
-                  </o-field>
-                </section>
-              </div>
-
-              <section v-show="openOrCloseAImages" class="previews pb-6">
-                <div
-                  v-for="(file, index) in previewFilesToModify"
-                  :key="index"
-                  class="preview-container"
-                >
-                  <img :src="file.url" alt="Vista previa" class="preview-img" />
-                  <button @click="removeImageToModify(index)" class="boton-vistaprevia">X</button>
-                </div>
+            <div v-show="openOrCloseAImages" class="image-container2">
+              <section class="upload-photo">
+                <o-field>
+                  <o-upload class="upload" multiple @change="handleFileUploadToModify">
+                    <div style="text-align: center">
+                      <p><o-icon icon="upload" size="is-large" /></p>
+                      <p>Haz click aquí para subir tus fotos</p>
+                    </div>
+                  </o-upload>
+                </o-field>
               </section>
-            </section>
+            </div>
 
-            <!-- Botones -->
-            <section>
-              <div class="botones">
-                <o-button type="button" class="guardar" @click="saveProperty(userId, row)"
-                  >Guardar</o-button
-                >
-                <o-button class="eliminar" @click="deleteProperty(userId, row.codeProperty, owner)">
-                  Eliminar
-                </o-button>
-                <o-button
-                  class="despublicar"
-                  :style="{
-                    'background-color': row.isPublicationDisabled ? '#209d12c9' : '#3f3f3fc9',
-                  }"
-                  @click="
-                    publishOrUnpublishProperty(userId, row.codeProperty, !row.isPublicationDisabled)
-                  "
-                >
-                  {{ row.isPublicationDisabled ? 'Publicar' : 'Despublicar' }}
-                </o-button>
+            <section v-show="openOrCloseAImages" class="previews pb-6">
+              <div
+                v-for="(file, index) in previewFilesToModify"
+                :key="index"
+                class="preview-container"
+              >
+                <img :src="file.url" alt="Vista previa" class="preview-img" />
+                <button @click="removeImageToModify(index)" class="boton-vistaprevia">X</button>
               </div>
-              <p v-if="showErrorsUpdate && hasEmptyFields(row)" class="error-msg-button">
-                Debes completar todos los campos obligatorios
-              </p>
             </section>
-          </template>
-        </o-table>
-        <o-loading v-model:active="isLoading" :full-page="isFullPage">
-          <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
-        </o-loading>
+          </section>
+
+          <!-- Botones -->
+          <section>
+            <div class="botones">
+              <o-button type="button" class="guardar" @click="saveProperty(userId, row)"
+                >Guardar</o-button
+              >
+              <o-button class="eliminar" @click="deleteProperty(userId, row.codeProperty, owner)">
+                Eliminar
+              </o-button>
+              <o-button
+                class="despublicar"
+                :style="{
+                  'background-color': row.isPublicationDisabled ? '#209d12c9' : '#3f3f3fc9',
+                }"
+                @click="
+                  publishOrUnpublishProperty(userId, row.codeProperty, !row.isPublicationDisabled)
+                "
+              >
+                {{ row.isPublicationDisabled ? 'Publicar' : 'Despublicar' }}
+              </o-button>
+            </div>
+            <p v-if="showErrorsUpdate && hasEmptyFields(row)" class="error-msg-button">
+              Debes completar todos los campos obligatorios
+            </p>
+          </section>
+        </template>
+      </o-table>
+      <o-loading v-model:active="isLoading" :full-page="isFullPage">
+        <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
+      </o-loading>
+    </div>
+  </div>
+  <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
+    <div
+      class="notification"
+      :style="{
+        'background-color': error
+          ? 'hsl(348deg 88.3% 67.24%)'
+          : major
+            ? 'hsl(36, 100%, 50%)'
+            : 'hsl(117, 81%, 34%)',
+      }"
+    >
+      <div class="container-modal">
+        <h1 class="titulo-modal">{{ tituloMensajeModal }}</h1>
+        <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
       </div>
-    </section>
-    <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
-      <div
-        class="notification"
-        :style="{
-          'background-color': error
-            ? 'hsl(348deg 88.3% 67.24%)'
-            : major
-              ? 'hsl(36, 100%, 50%)'
-              : 'hsl(117, 81%, 34%)',
-        }"
-      >
-        <div class="container-modal">
-          <h1 class="titulo-modal">{{ tituloMensajeModal }}</h1>
-          <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
-        </div>
-        <div>
-          <p class="notification-detail">{{ error ? error : major ? major : ok }}</p>
-        </div>
+      <div>
+        <p class="notification-detail">{{ error ? error : major ? major : ok }}</p>
       </div>
-    </o-modal>
-  </section>
+    </div>
+  </o-modal>
   <o-loading v-model:active="isLoading" :full-page="isFullPage">
     <i class="mdi mdi-reload mdi-36px" style="color: transparent"></i>
   </o-loading>
@@ -398,10 +393,7 @@ export default {
         )
         this.myProperties = getProperties.data
         this.isLoading = false
-      } catch (error) {
-        this.isCardModalActive = true
-        this.error = error
-        this.tituloMensajeModal = 'Error'
+      } catch {
         this.isLoading = false
       }
     },
