@@ -338,10 +338,6 @@ export default {
 }
 </script>
 <style scoped>
-section {
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #00bfff, #27c6fa, #ffc400, #ffd700);
-}
 .div-principal {
   padding: 70px 30px 50px 30px;
 }
