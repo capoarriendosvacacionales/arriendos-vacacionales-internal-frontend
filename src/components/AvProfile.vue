@@ -6,24 +6,89 @@
       </o-loading>
       <div class="card">
         <h1 class="titulo">Mi perfil</h1>
-        <p class="mb-1">Nombres</p>
+
+        <p class="field mb-1">Nombres</p>
         <input class="input mb-3" type="text" v-model="firstName" disabled />
-        <p class="mb-1">Apellidos</p>
+
+        <p class="field mb-1">Apellidos</p>
         <input class="input mb-3" type="text" v-model="lastName" disabled />
-        <p class="mb-1">Email</p>
+
+        <p class="field mb-1">Email</p>
         <input class="input mb-3" type="text" v-model="email" disabled />
-        <p class="mb-1">Fecha de nacimiento</p>
+
+        <p class="field mb-1">Fecha de nacimiento</p>
         <input class="input mb-3" type="text" v-model="birthDate" disabled />
-        <p class="mb-1">Banco<span v-show="!bank && email"> Campo obligatorio!</span></p>
-        <input class="input mb-3" type="text" v-model="bank" />
-        <p class="mb-1">
-          Nº de cuenta<span v-show="!bankAccount && email"> Campo obligatorio!</span>
-        </p>
-        <input class="input mb-3" type="text" v-model="bankAccount" />
-        <p class="mb-1">
-          Tipo de cuenta<span v-show="!typeAccount && email"> Campo obligatorio!</span>
-        </p>
-        <input class="input mb-3" type="text" v-model="typeAccount" />
+
+        <p class="important" v-show="!dni && email">Campo obligatorio!</p>
+        <p class="field mb-1">RUT / Pasaporte</p>
+        <input class="input mb-3" type="text" v-model="dni" />
+
+        <p class="important" v-show="!address && email">Campo obligatorio!</p>
+        <p class="field mb-1">Dirección</p>
+        <input class="input mb-3" type="text" v-model="address" />
+
+        <p class="important" v-show="!municipality && email">Campo obligatorio!</p>
+        <p class="field mb-1">Comuna</p>
+
+        <o-select class="mb-3" v-model="municipality" expanded>
+          <option v-for="option in listMunicipalities" :key="option.value" :value="option.label">
+            {{ option.label }}
+          </option>
+        </o-select>
+
+        <p class="important pt-3" v-show="!resortTown && email">Campo obligatorio!</p>
+        <p class="field mt-3 mb-1">Ciudad</p>
+
+        <o-select v-model="resortTown" expanded>
+          <option v-for="option in listResortTowns" :key="option.value" :value="option.label">
+            {{ option.label }}
+          </option>
+        </o-select>
+
+        <p class="important pt-3" v-show="!region && email">Campo obligatorio!</p>
+        <p class="field mt-3 mb-1">Región</p>
+
+        <o-select v-model="region" expanded>
+          <option v-for="option in listRegions" :key="option.value" :value="option.label">
+            {{ option.label }}
+          </option>
+        </o-select>
+
+        <p class="important pt-3" v-show="!country && email">Campo obligatorio!</p>
+        <p class="field mt-3 mb-1">País</p>
+
+        <o-select v-model="country" expanded>
+          <option v-for="option in listCountries" :key="option.value" :value="option.label">
+            {{ option.label }}
+          </option>
+        </o-select>
+
+        <p class="important pt-3" v-show="!phone && email">Campo obligatorio!</p>
+        <p class="field mt-3 mb-1">Fono</p>
+        <input class="input mb-3" type="text" v-model="phone" />
+
+        <p class="important" v-show="!bank && email">Campo obligatorio!</p>
+        <p class="field mb-1">Banco</p>
+
+        <o-select v-model="bank" expanded>
+          <option v-for="option in listBanks" :key="option.value" :value="option.label">
+            {{ option.label }}
+          </option>
+        </o-select>
+
+        <p class="important" v-show="!accountNumber && email">Campo obligatorio!</p>
+        <p class="field mb-1">Nº de cuenta</p>
+        <input class="input mb-3" type="text" v-model="accountNumber" />
+
+        <p class="important" v-show="!accountType && email">Campo obligatorio!</p>
+        <p class="field mb-1">Tipo de cuenta</p>
+
+        <o-select v-model="accountType" expanded>
+          <option v-for="option in listAccountTypes" :key="option.value" :value="option.label">
+            {{ option.label }}
+          </option>
+        </o-select>
+
         <o-button label="Guardar" class="boton" @click="saveProfile()" />
         <o-button label="Cerrar sesión" class="boton-logout" @click="logout()" />
         <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
@@ -48,6 +113,13 @@
 </template>
 <script>
 import api from '../api/api'
+import { listMunicipalities } from '@/assets/municipalities'
+import { listResortTowns } from '@/assets/resort-town'
+import { listRegions } from '@/assets/regions'
+import { listCountries } from '@/assets/countries'
+import { listBanks } from '@/assets/banks'
+import { listAccountTypes } from '@/assets/account-types'
+
 export default {
   name: 'AvProfile',
   data() {
@@ -56,9 +128,16 @@ export default {
       lastName: null,
       birthDate: null,
       email: null,
-      bankAccount: null,
       bank: null,
-      typeAccount: null,
+      accountNumber: null,
+      accountType: null,
+      dni: null,
+      address: null,
+      municipality: null,
+      resortTown: null,
+      region: null,
+      country: null,
+      phone: null,
       error: null,
       ok: null,
       isLoading: false,
@@ -66,6 +145,12 @@ export default {
       isCardModalActive: false,
       mensajeModal: null,
       tituloMensajeModal: null,
+      listMunicipalities,
+      listResortTowns,
+      listRegions,
+      listCountries,
+      listBanks,
+      listAccountTypes,
     }
   },
   async beforeMount() {
@@ -83,9 +168,17 @@ export default {
       this.lastName = getProfile.data.lastName
       this.birthDate = getProfile.data.birthDate
       this.email = getProfile.data.email
-      this.bankAccount = getProfile.data.bankAccount
+      this.accountNumber = getProfile.data.accountNumber
       this.bank = getProfile.data.bank
-      this.typeAccount = getProfile.data.typeAccount
+      this.accountType = getProfile.data.accountType
+      this.dni = getProfile.data.dni
+      this.address = getProfile.data.address
+      this.municipality = getProfile.data.municipality
+      this.resortTown = getProfile.data.resortTown
+      this.region = getProfile.data.region
+      this.country = getProfile.data.country
+      this.phone = getProfile.data.phone
+
       this.isLoading = false
     } catch (error) {
       this.isCardModalActive = true
@@ -96,33 +189,59 @@ export default {
   },
   methods: {
     async saveProfile() {
+      // Evita dobles clics y llamadas dobles
+      if (this.isLoading) return
+
+      this.isLoading = true
+      this.error = null
+      this.ok = null
+
+      const isEmpty = (value) => value === undefined || value === null || value === ''
+
+      if (
+        isEmpty(this.accountNumber) ||
+        isEmpty(this.bank) ||
+        isEmpty(this.accountType) ||
+        isEmpty(this.dni) ||
+        isEmpty(this.address) ||
+        isEmpty(this.municipality) ||
+        isEmpty(this.resortTown) ||
+        isEmpty(this.region) ||
+        isEmpty(this.country) ||
+        isEmpty(this.phone)
+      ) {
+        this.error = 'Completa todos los campos obligatorios.'
+        this.tituloMensajeModal = 'Error'
+        this.isCardModalActive = true
+        this.isLoading = false
+        return // 🔥 ahora SÍ DETIENE TODO
+      }
       try {
-        this.isLoading = true
-
-        if (this.bankAccount === '' || this.bank === '' || this.typeAccount === '') {
-          this.isCardModalActive = true
-          this.error = 'Los campos Banco, Tipo de cuenta y Número de cuenta son obligatorios.'
-          this.tituloMensajeModal = 'Error'
-          this.isLoading = false
-          return
-        }
-
         const userId = localStorage.getItem('id')
         const body = {
           userId: userId,
           bank: this.bank,
-          bankAccount: this.bankAccount,
-          typeAccount: this.typeAccount,
+          accountNumber: this.accountNumber,
+          accountType: this.accountType,
+          dni: this.dni,
+          address: this.address,
+          municipality: this.municipality,
+          resortTown: this.resortTown,
+          region: this.region,
+          country: this.country,
+          phone: this.phone,
         }
         /* const updateProfile = await api.patch(`${import.meta.env.VITE_BACKEND_PATCH_PROFILE}`, body) */
         const updateProfile = await api.patch(import.meta.env.VITE_BACKEND_PATCH_PROFILE, body)
         if (updateProfile.data.id) {
+          this.error = null
           this.tituloMensajeModal = 'Excelente'
           this.ok = 'Perfil actualizado!'
         }
         this.isLoading = false
         this.isCardModalActive = true
       } catch (error) {
+        this.ok = null
         this.tituloMensajeModal = 'Error'
         this.isCardModalActive = true
         this.error = error
@@ -147,6 +266,9 @@ export default {
   margin-bottom: 30px;
   text-align: center;
 }
+.field {
+  text-align: left;
+}
 .titulo {
   font-weight: 500;
   font-size: 23px;
@@ -158,7 +280,8 @@ export default {
   margin: 180px auto;
   padding: 30px;
   border-radius: 30px;
-  max-width: calc(500px - 60px) !important;
+  width: 350px !important;
+  /* max-width: calc(500px - 60px) !important; */
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
@@ -187,10 +310,10 @@ export default {
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
 }
-span {
-  margin-top: 3px;
+.important {
   font-size: 14px;
   color: red;
+  margin-top: 3px;
   float: right;
 }
 .notification {
@@ -235,6 +358,7 @@ span {
 @media (min-width: 769px) {
   .card {
     margin-top: 210px;
+    width: 500px !important;
   }
   .table-wrapper .table-inner.is-mobile td {
     width: 360px !important;

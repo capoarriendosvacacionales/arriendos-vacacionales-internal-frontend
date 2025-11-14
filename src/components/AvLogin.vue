@@ -207,8 +207,6 @@ export default {
         // 4️⃣ Envío al backend
         const body = { ...this.user }
 
-        console.log(body)
-
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_POST_CREATE_USER}`, body)
 
         // Normaliza el "ok" del backend: admite boolean suelto o { ok: boolean }
