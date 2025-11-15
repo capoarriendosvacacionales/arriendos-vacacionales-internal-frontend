@@ -13,11 +13,9 @@ export default defineConfig(({ command, mode }) => ({
           host: '0.0.0.0',
           port: 8080,
           allowedHosts: ['internal.arriendosvacacionales.local', 'internal-frontend'],
-          hmr: {
-            protocol: 'ws',
-            host: 'internal.arriendosvacacionales.local',
-            clientPort: 80,
-          },
+
+          // 👇 FIX DEFINITIVO PARA LOCAL
+          hmr: true,
         }
       : undefined,
   resolve: {
@@ -26,8 +24,8 @@ export default defineConfig(({ command, mode }) => ({
     },
   },
   build: {
-    outDir: 'dist', // Directorio de salida para producción
-    sourcemap: mode === 'production' ? false : true, // Evita sourcemaps en producción
+    outDir: 'dist',
+    sourcemap: mode === 'production' ? false : true,
     rollupOptions: {
       input: {
         main: './index.html',

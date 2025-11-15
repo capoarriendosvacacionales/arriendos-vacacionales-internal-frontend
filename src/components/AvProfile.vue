@@ -78,7 +78,7 @@
 
         <p class="important" v-show="!accountNumber && email">Campo obligatorio!</p>
         <p class="field mb-1">Nº de cuenta</p>
-        <input class="input mb-3" type="text" v-model="accountNumber" />
+        <input id="accountNumber" class="input mb-3" type="text" v-model="accountNumber" />
 
         <p class="important" v-show="!accountType && email">Campo obligatorio!</p>
         <p class="field mb-1">Tipo de cuenta</p>

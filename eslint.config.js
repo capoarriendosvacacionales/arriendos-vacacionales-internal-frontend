@@ -13,6 +13,16 @@ export default [
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
 
+  {
+    files: ['cypress/e2e/**/*.cy.js'],
+    plugins: {
+      cypress: pluginCypress,
+    },
+    languageOptions: {
+      globals: pluginCypress.environments.globals.globals,
+    },
+  },
+
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   skipFormatting,
