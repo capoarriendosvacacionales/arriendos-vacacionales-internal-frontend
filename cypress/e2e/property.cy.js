@@ -1,6 +1,6 @@
-describe('Actualizar propiedad', () => {
+describe('Publicar/Despublicar propiedad', () => {
   beforeEach(() => {
-    cy.viewport(1280, 900)
+    cy.viewport(1280, 1600)
     cy.visit('/login')
 
     cy.get('input[placeholder="Correo electrónico"]').type('karlanito@gmail.com')
@@ -29,9 +29,13 @@ describe('Actualizar propiedad', () => {
 
   it('debe publicar la primera propiedad', () => {
     cy.contains('Mis propiedades')
+
     cy.get('.card-table table tbody tr', { timeout: 8000 }).should('have.length.at.least', 1)
+
     cy.get('body').find('.card-table tbody .mdi-chevron-right').first().click({ force: true })
+
     cy.contains('Publicar').click()
+
     cy.contains('Propiedad actualizada!').should('be.visible')
   })
 })

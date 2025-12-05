@@ -2,12 +2,11 @@
 
 describe('Hacer Login', () => {
   beforeEach(() => {
+    cy.viewport(1280, 1600)
     cy.visit('/login') // Asegura que el usuario está en la ruta correcta
   })
 
   it('Debe iniciar sesión, ir a Mi perfil, cerrar sesión y volver a /login', () => {
-    cy.viewport(1280, 900)
-
     // Login correcto
     cy.get('input[placeholder="Correo electrónico"]').type('karlanito@gmail.com')
     cy.get('input[placeholder="Password"]').type('12345')

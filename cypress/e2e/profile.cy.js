@@ -2,7 +2,7 @@
 
 describe('Actualizar perfil', () => {
   beforeEach(() => {
-    cy.viewport(1280, 900)
+    cy.viewport(1280, 1600)
     cy.visit('/login')
 
     cy.get('input[placeholder="Correo electrónico"]').type('karlanito@gmail.com')
