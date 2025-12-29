@@ -17,11 +17,7 @@
         <p class="mb-1">Password</p>
         <input class="input" type="password" placeholder="Password" v-model="password" required />
         <o-button label="Iniciar sesión" class="boton" @click="login" />
-        <o-button
-          label="Crear cuenta"
-          class="boton-crear-cuenta"
-          @click="createAccount(crearCuenta)"
-        />
+        <o-button label="Crear cuenta" class="boton-crear-cuenta" @click="createAccount()" />
         <div v-if="crearCuenta" class="create-user">
           <div class="disclaimer">
             <p>
