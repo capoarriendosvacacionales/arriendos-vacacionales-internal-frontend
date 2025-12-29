@@ -73,7 +73,7 @@
               Las contraseñas deben ser iguales y con formato válido
             </p>
           </div>
-          <o-button class="boton-crear-cuenta" :disabled="isLoading" @click.prevent="createUser">
+          <o-button class="boton-crear-cuenta" :disabled="isLoading" @click.prevent="">
             {{ isLoading ? 'Procesando…' : 'Crear cuenta' }}
           </o-button>
         </div>
