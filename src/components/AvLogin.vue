@@ -203,7 +203,10 @@ export default {
         // 4️⃣ Envío al backend
         const body = { ...this.user }
 
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_POST_CREATE_USER}`, body)
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}${import.meta.env.VITE_BACKEND_POST_CREATE_USER}`,
+          body,
+        )
 
         // Normaliza el "ok" del backend: admite boolean suelto o { ok: boolean }
         const okFlag = typeof response.data === 'boolean' ? response.data : !!response.data?.ok
@@ -256,7 +259,10 @@ export default {
         // 2️⃣ Envío al backend
         const body = { email: this.email, verficationUser: this.confirmationCode }
 
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_POST_CONFIRM_USER}`, body)
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}${import.meta.env.VITE_BACKEND_POST_CONFIRM_USER}`,
+          body,
+        )
 
         // Normaliza el "ok" del backend: admite boolean suelto o { ok: boolean }
         const okFlag = typeof response.data === 'boolean' ? response.data : !!response.data?.ok
@@ -293,10 +299,13 @@ export default {
     async login() {
       try {
         this.isLoading = true
-        const response = await axios.post(import.meta.env.VITE_AUTH_URL, {
-          username: this.username,
-          password: this.password,
-        })
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}${import.meta.env.VITE_AUTH_URL}`,
+          {
+            username: this.username,
+            password: this.password,
+          },
+        )
         const idUser = response.data.id
         const username = response.data.username
         const token = response.data.access_token

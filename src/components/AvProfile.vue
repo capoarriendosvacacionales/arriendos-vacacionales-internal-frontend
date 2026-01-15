@@ -5,109 +5,138 @@
         <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
       </o-loading>
       <div class="card">
-        <h1 class="titulo">Mi perfil</h1>
+        <o-collapse :open="false" expanded trigger-class="trigger">
+          <template #trigger="{ open }">
+            <h1 class="titulo">
+              <o-icon class="flecha" :icon="open ? 'chevron-down' : 'chevron-right'" />
+              Mi perfil
+            </h1>
+          </template>
 
-        <p class="field mb-1">Nombres</p>
-        <input class="input mb-3" type="text" v-model="firstName" disabled />
+          <p class="field mt-4 mb-1">Nombres</p>
+          <input class="input mb-3" type="text" v-model="firstName" disabled />
 
-        <p class="field mb-1">Apellidos</p>
-        <input class="input mb-3" type="text" v-model="lastName" disabled />
+          <p class="field mb-1">Apellidos</p>
+          <input class="input mb-3" type="text" v-model="lastName" disabled />
 
-        <p class="field mb-1">Email</p>
-        <input class="input mb-3" type="text" v-model="email" disabled />
+          <p class="field mb-1">Email</p>
+          <input class="input mb-3" type="text" v-model="email" disabled />
 
-        <p class="field mb-1">Fecha de nacimiento</p>
-        <input class="input mb-3" type="text" v-model="birthDate" disabled />
+          <p class="field mb-1">Fecha de nacimiento</p>
+          <input class="input mb-3" type="text" v-model="birthDate" disabled />
 
-        <p class="important" v-show="!dni && email">Campo obligatorio!</p>
-        <p class="field mb-1">RUT / Pasaporte</p>
-        <input class="input mb-3" type="text" v-model="dni" />
+          <p class="important" v-show="!dni && email">Campo obligatorio!</p>
+          <p class="field mb-1">RUT / Pasaporte</p>
+          <input class="input mb-3" type="text" v-model="dni" />
 
-        <p class="important" v-show="!address && email">Campo obligatorio!</p>
-        <p class="field mb-1">Dirección</p>
-        <input class="input mb-3" type="text" v-model="address" />
+          <p class="important" v-show="!address && email">Campo obligatorio!</p>
+          <p class="field mb-1">Dirección</p>
+          <input class="input mb-3" type="text" v-model="address" />
 
-        <p class="important" v-show="!municipality && email">Campo obligatorio!</p>
-        <p class="field mb-1">Comuna</p>
+          <p class="important" v-show="!municipality && email">Campo obligatorio!</p>
+          <p class="field mb-1">Comuna</p>
 
-        <o-select class="mb-3" v-model="municipality" expanded>
-          <option v-for="option in listMunicipalities" :key="option.value" :value="option.label">
-            {{ option.label }}
-          </option>
-        </o-select>
+          <o-select class="mb-3" v-model="municipality" expanded>
+            <option v-for="option in listMunicipalities" :key="option.value" :value="option.label">
+              {{ option.label }}
+            </option>
+          </o-select>
 
-        <p class="important pt-3" v-show="!resortTown && email">Campo obligatorio!</p>
-        <p class="field mt-3 mb-1">Ciudad</p>
+          <p class="important pt-3" v-show="!resortTown && email">Campo obligatorio!</p>
+          <p class="field mt-3 mb-1">Ciudad</p>
 
-        <o-select v-model="resortTown" expanded>
-          <option v-for="option in listResortTowns" :key="option.value" :value="option.label">
-            {{ option.label }}
-          </option>
-        </o-select>
+          <o-select v-model="resortTown" expanded>
+            <option v-for="option in listResortTowns" :key="option.value" :value="option.label">
+              {{ option.label }}
+            </option>
+          </o-select>
 
-        <p class="important pt-3" v-show="!region && email">Campo obligatorio!</p>
-        <p class="field mt-3 mb-1">Región</p>
+          <p class="important pt-3" v-show="!region && email">Campo obligatorio!</p>
+          <p class="field mt-3 mb-1">Región</p>
 
-        <o-select v-model="region" expanded>
-          <option v-for="option in listRegions" :key="option.value" :value="option.label">
-            {{ option.label }}
-          </option>
-        </o-select>
+          <o-select v-model="region" expanded>
+            <option v-for="option in listRegions" :key="option.value" :value="option.label">
+              {{ option.label }}
+            </option>
+          </o-select>
 
-        <p class="important pt-3" v-show="!country && email">Campo obligatorio!</p>
-        <p class="field mt-3 mb-1">País</p>
+          <p class="important pt-3" v-show="!country && email">Campo obligatorio!</p>
+          <p class="field mt-3 mb-1">País</p>
 
-        <o-select v-model="country" expanded>
-          <option v-for="option in listCountries" :key="option.value" :value="option.label">
-            {{ option.label }}
-          </option>
-        </o-select>
+          <o-select v-model="country" expanded>
+            <option v-for="option in listCountries" :key="option.value" :value="option.label">
+              {{ option.label }}
+            </option>
+          </o-select>
 
-        <p class="important pt-3" v-show="!phone && email">Campo obligatorio!</p>
-        <p class="field mt-3 mb-1">Fono</p>
-        <input class="input mb-3" type="text" v-model="phone" />
+          <p class="important pt-3" v-show="!phone && email">Campo obligatorio!</p>
+          <p class="field mt-3 mb-1">Fono</p>
+          <input class="input mb-3" type="text" v-model="phone" />
 
-        <p class="important" v-show="!bank && email">Campo obligatorio!</p>
-        <p class="field mb-1">Banco</p>
+          <p class="important" v-show="!bank && email">Campo obligatorio!</p>
+          <p class="field mb-1">Banco</p>
 
-        <o-select v-model="bank" expanded>
-          <option v-for="option in listBanks" :key="option.value" :value="option.label">
-            {{ option.label }}
-          </option>
-        </o-select>
+          <o-select v-model="bank" expanded>
+            <option v-for="option in listBanks" :key="option.value" :value="option.label">
+              {{ option.label }}
+            </option>
+          </o-select>
 
-        <p class="important" v-show="!accountNumber && email">Campo obligatorio!</p>
-        <p class="field mb-1">Nº de cuenta</p>
-        <input id="accountNumber" class="input mb-3" type="text" v-model="accountNumber" />
+          <p class="important" v-show="!accountNumber && email">Campo obligatorio!</p>
+          <p class="field mt-3 mb-1">Nº de cuenta</p>
+          <input id="accountNumber" class="input mb-3" type="text" v-model="accountNumber" />
 
-        <p class="important" v-show="!accountType && email">Campo obligatorio!</p>
-        <p class="field mb-1">Tipo de cuenta</p>
+          <p class="important" v-show="!accountType && email">Campo obligatorio!</p>
+          <p class="field mb-1">Tipo de cuenta</p>
 
-        <o-select v-model="accountType" expanded>
-          <option v-for="option in listAccountTypes" :key="option.value" :value="option.label">
-            {{ option.label }}
-          </option>
-        </o-select>
+          <o-select v-model="accountType" expanded>
+            <option v-for="option in listAccountTypes" :key="option.value" :value="option.label">
+              {{ option.label }}
+            </option>
+          </o-select>
 
-        <o-button label="Guardar" class="boton" @click="saveProfile()" />
-        <o-button label="Cerrar sesión" class="boton-logout" @click="logout()" />
-        <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
-          <div
-            class="notification"
-            :style="{
-              'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)',
-            }"
-          >
-            <div class="container-modal">
-              <h1 class="titulo-modal">{{ tituloMensajeModal }}</h1>
-              <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
-            </div>
-            <div>
-              <p class="notification-detail">{{ error ? error : ok }}</p>
-            </div>
-          </div>
-        </o-modal>
+          <o-button label="Guardar" class="boton" @click="saveProfile()" />
+          <o-button label="Cerrar sesión" class="boton-logout" @click="logout()" />
+        </o-collapse>
       </div>
+
+      <div class="card sub-card">
+        <o-collapse :open="false" expanded trigger-class="trigger">
+          <template #trigger="{ open }">
+            <h1 class="titulo">
+              <o-icon class="flecha" :icon="open ? 'chevron-down' : 'chevron-right'" />
+              Cambiar contraseña
+            </h1>
+          </template>
+
+          <p class="field mt-4 mb-1">Ingresa tu contraseña actual</p>
+          <input class="input mb-3" type="password" v-model="lastPassword" />
+
+          <p class="field mb-1">Ingresa tu nueva contraseña</p>
+          <input class="input mb-3" type="password" v-model="newPassword" />
+
+          <p class="field mb-1">Confirma tu nueva contraseña</p>
+          <input class="input mb-3" type="password" v-model="confirmNewPassword" />
+
+          <o-button label="Cambiar contraseña" class="boton" @click="changePassword()" />
+        </o-collapse>
+      </div>
+      <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
+        <div
+          class="notification"
+          :style="{
+            'background-color': error ? 'hsl(348deg 88.3% 67.24%)' : 'hsl(117, 81%, 34%)',
+          }"
+        >
+          <div class="container-modal">
+            <h1 class="titulo-modal">{{ tituloMensajeModal }}</h1>
+            <i class="mdi mdi-close-circle-outline mdi-close" @click="closeModal()"></i>
+          </div>
+          <div>
+            <p class="notification-detail">{{ error ? error : ok }}</p>
+          </div>
+        </div>
+      </o-modal>
     </div>
   </section>
 </template>
@@ -151,6 +180,9 @@ export default {
       listCountries,
       listBanks,
       listAccountTypes,
+      lastPassword: null,
+      newPassword: null,
+      confirmNewPassword: null,
     }
   },
   async beforeMount() {
@@ -248,6 +280,61 @@ export default {
         this.isLoading = false
       }
     },
+    async changePassword() {
+      if (this.isLoading) return
+
+      this.isLoading = true
+      this.error = null
+      this.ok = null
+
+      const isEmpty = (value) => value === undefined || value === null || value === ''
+
+      if (
+        isEmpty(this.lastPassword) ||
+        isEmpty(this.newPassword) ||
+        isEmpty(this.confirmNewPassword)
+      ) {
+        this.error = 'Completa todos los campos de contraseña.'
+        this.tituloMensajeModal = 'Error'
+        this.isCardModalActive = true
+        this.isLoading = false
+        return
+      }
+
+      const isValidPassword = this.validatePassword()
+      if (!isValidPassword) return
+
+      try {
+        const id = localStorage.getItem('id')
+        const user = localStorage.getItem('user')
+        const body = {
+          id: id,
+          email: user,
+          lastPassword: this.lastPassword,
+          newPassword: this.newPassword,
+          confirmPassword: this.confirmNewPassword,
+        }
+        const changePassword = await api.patch(import.meta.env.VITE_BACKEND_PATCH_PASSWORD, body)
+        console.log('changePassword: ', changePassword)
+
+        if (changePassword) {
+          this.error = null
+          this.tituloMensajeModal = 'Excelente'
+          this.ok = 'Password actualizada!'
+        }
+        this.isLoading = false
+        this.isCardModalActive = true
+      } catch (error) {
+        this.ok = null
+        this.tituloMensajeModal = 'Error'
+        this.isCardModalActive = true
+        this.error = error.response.data.message
+        console.log('changePassword error raw:', error)
+        console.log('backend payload:', error?.response?.data)
+      } finally {
+        this.isLoading = false
+      }
+    },
     closeModal() {
       this.isCardModalActive = false
     },
@@ -256,6 +343,37 @@ export default {
       localStorage.removeItem('id')
       localStorage.removeItem('user')
       this.$router.push('/login')
+    },
+    validatePassword() {
+      const passwordRegex =
+        /^[A-Z](?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[{}\]:;'",.<>/?|`~])\S{7,}$/
+
+      if (this.newPassword !== this.confirmNewPassword) {
+        this.error = 'Las contraseñas no coinciden.'
+        this.tituloMensajeModal = 'Error'
+        this.isCardModalActive = true
+        this.isLoading = false
+        return false
+      }
+
+      if (this.newPassword === this.lastPassword) {
+        this.error = 'La nueva contraseña no puede ser igual a la actual.'
+        this.tituloMensajeModal = 'Error'
+        this.isCardModalActive = true
+        this.isLoading = false
+        return false
+      }
+
+      if (!passwordRegex.test(this.newPassword)) {
+        this.error =
+          'La contraseña debe comenzar con mayúscula, incluir al menos una minúscula, un número y un símbolo, tener mínimo 8 caracteres y no contener espacios.'
+        this.tituloMensajeModal = 'Error'
+        this.isCardModalActive = true
+        this.isLoading = false
+        return false
+      }
+
+      return true
     },
   },
 }
@@ -272,12 +390,12 @@ export default {
 .titulo {
   font-weight: 500;
   font-size: 23px;
-  padding-bottom: 12px;
+  /* padding-bottom: 12px; */
   color: #005187;
   text-align: center;
 }
 .card {
-  margin: 180px auto;
+  /* margin: 180px auto; */
   padding: 30px;
   border-radius: 30px;
   width: 350px !important;
@@ -346,6 +464,12 @@ export default {
   font-weight: 500;
   color: #fff;
   padding-top: 8px;
+}
+.flecha {
+  margin-right: 5px;
+}
+.sub-card {
+  margin-top: 50px !important;
 }
 @media (min-width: 320px) and (max-width: 768px) {
   .div-principal {
