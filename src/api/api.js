@@ -18,14 +18,20 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 )
 
-// Interceptor de respuesta: si se recibe un error 401, redirige a la ruta de login
+// Interceptor de respuesta: si se recibe un error 401, redirige a login
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Redirige a la ruta de login
+    const status = error?.response?.status
+
+    // Ruta actual (Vue Router 4)
+    const currentPath = router?.currentRoute?.value?.path
+
+    // Si estamos en reset-password, NO redirjir; dejar que la vista muestre el mensaje
+    if (status === 401 && currentPath !== '/reset-password') {
       router.push({ name: 'login' })
     }
+
     return Promise.reject(error)
   },
 )

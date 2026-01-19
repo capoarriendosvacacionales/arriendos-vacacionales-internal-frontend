@@ -5,6 +5,7 @@ import CalendarView from '../views/CalendarView.vue'
 import PropertiesView from '../views/PropertiesView.vue'
 import NotFoundView from '../views/NotFoundView.vue' // Importa el componente 404
 import HomeView from '../views/HomeView.vue'
+import ResetPasswordView from '../views/ResetPasswordView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,12 @@ const router = createRouter({
       meta: { layout: 'default', requiresAuth: true }, // layout con header y footer
     },
     {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: ResetPasswordView,
+      meta: { layout: 'auth' }, // pantalla pre-login
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: NotFoundView,
@@ -60,15 +67,16 @@ function isTokenValid(token) {
 }
 
 router.beforeEach((to) => {
+  // permitir siempre reset-password (no requiere sesión)
+  if (to.name === 'reset-password') return true
+
   const token = localStorage.getItem('access_token')
   const authed = token && isTokenValid(token)
 
-  // Entrada al home: decide según sesión
   if (to.path === '/') {
     return authed ? { name: 'calendar' } : { name: 'login' }
   }
 
-  // Si requiere auth y no está autenticado => login + limpia storage
   if (to.meta.requiresAuth && !authed) {
     localStorage.removeItem('access_token')
     localStorage.removeItem('user')
@@ -76,7 +84,6 @@ router.beforeEach((to) => {
     return { name: 'login' }
   }
 
-  // Si ya está autenticado y quiere ir a login => calendar
   if (to.name === 'login' && authed) {
     return { name: 'calendar' }
   }

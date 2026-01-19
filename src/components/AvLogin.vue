@@ -29,7 +29,7 @@
             <p class="mt-2 mb-1 ml-1">
               <o-tooltip
                 v-if="field.key === 'password1'"
-                label="La contraseña debe contener 8 dígitos o más, deben ser alphanumericos y tener 1 caracter especial"
+                label="La contraseña debe comenzar con mayúscula, contener 8 dígitos o más, incluir al menos una minúscula, un número, un símbolo y no contener espacios"
                 position="right"
                 multiline
               >
@@ -73,6 +73,33 @@
             {{ isLoading ? 'Procesando…' : 'Crear cuenta' }}
           </o-button>
         </div>
+
+        <o-collapse :open="false" expanded trigger-class="trigger">
+          <template #trigger="{ open }">
+            <o-button class="recovery-boton">
+              <div class="icon-text">
+                <o-icon class="flecha" :icon="open ? 'chevron-down' : 'chevron-right'" />
+                <p>He olvidado mi contraseña</p>
+              </div>
+            </o-button>
+          </template>
+
+          <div class="forget-password">
+            <p class="field mb-1 ingresa-email_cuenta">Ingresa tu correo electrónico</p>
+            <input
+              class="input"
+              type="email"
+              placeholder="Correo electrónico"
+              v-model="recoveryEmailInput"
+              required
+            />
+            <o-button
+              label="Recuperar contraseña"
+              class="recovery-boton_confirm"
+              @click="recoveryPassword()"
+            />
+          </div>
+        </o-collapse>
       </div>
       <o-modal v-model:active="isCardModalActive" :width="330" scroll="clip">
         <div
@@ -158,6 +185,7 @@ export default {
       customBackgroundColor: null,
       customTextColor: null,
       email: null,
+      recoveryEmailInput: null,
     }
   },
   methods: {
@@ -167,7 +195,7 @@ export default {
         this._resetNotices() // limpia mensajes previos
         this.showErrorsAdd = true // activa validación visual
 
-        // 1️⃣ Validación de campos vacíos
+        // Validación de campos vacíos
         const hasEmpty = Object.values(this.user).some((v) => v === '' || v === null)
         if (hasEmpty) {
           this.isLoading = false
@@ -178,7 +206,7 @@ export default {
           return
         }
 
-        // 2️⃣ Validación de coincidencia de contraseñas
+        // Validación de coincidencia de contraseñas
         if (this.user.password1 !== this.user.password2) {
           this.isLoading = false
           this.isCardModalActive = true
@@ -187,7 +215,7 @@ export default {
           return
         }
 
-        // 3️⃣ Validación de formato de contraseña
+        // Validación de formato de contraseña
         const passwordRegex =
           /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[{}\]:;'",.<>/?|`~]).{8,}$/
 
@@ -200,7 +228,7 @@ export default {
           return
         }
 
-        // 4️⃣ Envío al backend
+        // Envío al backend
         const body = { ...this.user }
 
         const response = await axios.post(
@@ -212,9 +240,7 @@ export default {
         const okFlag = typeof response.data === 'boolean' ? response.data : !!response.data?.ok
 
         if (!okFlag) {
-          // Opcional: toma mensaje del backend si existe
-          const msg =
-            response.data?.message ||
+          response.data?.message ||
             'Las contraseñas no coinciden o la contraseña no cumple el formato.'
           this.isLoading = false
           this.isCardModalActive = true
@@ -242,11 +268,67 @@ export default {
         this.error = error
       }
     },
+    async recoveryPassword() {
+      try {
+        this.isLoading = true
+        this._resetNotices() // limpia mensajes previos
+        this.showErrorsAdd = true // activa validación visual
+
+        // Validación del campo vacío
+        if (this.recoveryEmailInput === null || this.recoveryEmailInput === '') {
+          this.isLoading = false
+          this.major = 'Ingresa tu correo electrónico asociado a tu cuenta.'
+          this.isCardModalActive = true
+          this.tituloMensajeModal = 'Importante'
+          this.error = 'Ingresa tu correo electrónico asociado a tu cuenta'
+          this.recoveryEmailInput = null
+          return
+        }
+
+        // Envío al backend
+        const body = { email: this.recoveryEmailInput }
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/auth/forgot-password`,
+          body,
+        )
+
+        if (!response.data) {
+          const mensaje = 'El correo electrónico no está registrado.'
+          this.isLoading = false
+          this.isCardModalActive = true
+          this.tituloMensajeModal = 'Error'
+          this.error = mensaje
+          this.recoveryEmailInput = null
+          return
+        }
+
+        // Éxito
+        this.isLoading = false
+        this.error = false
+        this.isCardModalActive = true
+        this.tituloMensajeModal = 'Importante'
+        this.customBackgroundColor = 'hsl(117, 81%, 34%)'
+        this.customTextColor = '#fff'
+        this.ok =
+          'Te hemos enviado un correo electrónico con un link para que recuperes el acceso a tu cuenta.'
+        this.recoveryEmailInput = null
+      } catch (error) {
+        const backendMessage = error?.response?.data?.message
+        this.isCardModalActive = true
+        this.tituloMensajeModal = 'Error'
+        this.error = Array.isArray(backendMessage)
+          ? backendMessage.join(', ')
+          : backendMessage || 'Error inesperado'
+        this.recoveryEmailInput = null
+      } finally {
+        this.isLoading = false
+      }
+    },
     async confirmUser() {
       try {
         this.isLoading = true
 
-        // 1️⃣ Validación de campo vacío
+        // Validación de campo vacío
         if (this.confirmationCode === null || this.confirmationCode === '') {
           this.isLoading = false
           this.isCardModalActive = true
@@ -256,7 +338,7 @@ export default {
           return
         }
 
-        // 2️⃣ Envío al backend
+        // Envío al backend
         const body = { email: this.email, verficationUser: this.confirmationCode }
 
         const response = await axios.post(
@@ -334,7 +416,7 @@ export default {
       this.major = null
     },
     _resetForm() {
-      this.user = getDefaultUser() // tu factory actual
+      this.user = getDefaultUser()
       this.showErrorsAdd = false
     },
   },
@@ -379,6 +461,28 @@ export default {
   max-width: 500px;
   color: white;
   background-color: #0580a9;
+  font-size: 18px;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
+.recovery-boton {
+  margin-top: 20px;
+  padding: 13px;
+  width: 381px;
+  max-width: 500px;
+  font-size: 18px;
+  border: none;
+  background-color: #ffbb3226;
+  box-shadow: none;
+}
+.recovery-boton_confirm {
+  margin-top: 30px;
+  padding: 13px;
+  width: 340px;
+  max-width: 500px;
+  color: black;
+  background-color: #ffb300;
   font-size: 18px;
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.2),
@@ -458,5 +562,15 @@ select {
 }
 .tooltip .tooltip-content.is-right.is-multiline {
   width: 200px !important;
+}
+.icon-text {
+  display: flex;
+}
+.flecha {
+  margin-top: 0.1rem !important;
+}
+.forget-password {
+  background-color: #ffbb3226;
+  padding: 5px 20px 20px 20px;
 }
 </style>

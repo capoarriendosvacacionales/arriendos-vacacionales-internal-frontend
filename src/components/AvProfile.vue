@@ -4,6 +4,7 @@
       <o-loading v-model:active="isLoading" :full-page="isFullPage">
         <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
       </o-loading>
+
       <div class="card">
         <o-collapse :open="false" expanded trigger-class="trigger">
           <template #trigger="{ open }">
@@ -112,7 +113,17 @@
           <p class="field mt-4 mb-1">Ingresa tu contraseña actual</p>
           <input class="input mb-3" type="password" v-model="lastPassword" />
 
-          <p class="field mb-1">Ingresa tu nueva contraseña</p>
+          <p class="field mb-1">
+            <o-tooltip
+              label="La contraseña debe comenzar con mayúscula, contener 8 dígitos o más, incluir al menos una minúscula, un número, un símbolo y no contener espacios"
+              position="right"
+              multiline
+            >
+              <i class="mdi mdi-information custom-icon pr-1"></i>
+            </o-tooltip>
+
+            <span class="password-span">Ingresa tu nueva contraseña</span>
+          </p>
           <input class="input mb-3" type="password" v-model="newPassword" />
 
           <p class="field mb-1">Confirma tu nueva contraseña</p>
@@ -315,7 +326,6 @@ export default {
           confirmPassword: this.confirmNewPassword,
         }
         const changePassword = await api.patch(import.meta.env.VITE_BACKEND_PATCH_PASSWORD, body)
-        console.log('changePassword: ', changePassword)
 
         if (changePassword) {
           this.error = null
@@ -470,6 +480,13 @@ export default {
 }
 .sub-card {
   margin-top: 50px !important;
+}
+.custom-icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+.password-span {
+  margin-top: 2px;
 }
 @media (min-width: 320px) and (max-width: 768px) {
   .div-principal {
