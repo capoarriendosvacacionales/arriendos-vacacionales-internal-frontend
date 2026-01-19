@@ -287,7 +287,10 @@ export default {
 
         // Envío al backend
         const body = { email: this.recoveryEmailInput }
-        const response = await axios.post('/auth/forgot-password', body)
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/auth/forgot-password`,
+          body,
+        )
 
         if (!response.data) {
           const mensaje = 'El correo electrónico no está registrado.'
