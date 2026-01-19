@@ -1,9 +1,9 @@
 <template>
   <section>
+    <o-loading v-model:active="isLoading" :full-page="isFullPage">
+      <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
+    </o-loading>
     <div class="div-principal">
-      <o-loading v-model:active="isLoading" :full-page="isFullPage">
-        <i class="mdi mdi-reload mdi-36px mdi-spin"></i>
-      </o-loading>
       <div class="card">
         <h1 class="titulo">Inicio de sesión</h1>
         <p class="mb-1">Usuario</p>
@@ -17,62 +17,77 @@
         <p class="mb-1">Password</p>
         <input class="input" type="password" placeholder="Password" v-model="password" required />
         <o-button label="Iniciar sesión" class="boton" @click="login" />
-        <o-button label="Crear cuenta" class="boton-crear-cuenta" @click="" />
-        <div v-if="crearCuenta" class="create-user">
-          <div class="disclaimer">
-            <p>
-              Importante! Debes completar tus datos de manera fidedigna. Serán importantes para
-              mantener nuestra comunicación contigo y concretar los pagos.
-            </p>
-          </div>
-          <div v-for="field in fields" :key="field.key" class="mb-3">
-            <p class="mt-2 mb-1 ml-1">
-              <o-tooltip
-                v-if="field.key === 'password1'"
-                label="La contraseña debe comenzar con mayúscula, contener 8 dígitos o más, incluir al menos una minúscula, un número, un símbolo y no contener espacios"
-                position="right"
-                multiline
+
+        <o-collapse v-model:open="isCreateUserOpen" expanded trigger-class="trigger">
+          <template #trigger="{ open }">
+            <o-button class="boton-crear-nueva-cuenta">
+              <div class="icon-text">
+                <o-icon class="flecha" :icon="open ? 'chevron-down' : 'chevron-right'" />
+                <p>Crear una cuenta</p>
+              </div>
+            </o-button>
+          </template>
+
+          <div class="create-user">
+            <div class="disclaimer">
+              <p>
+                Importante! Debes completar tus datos de manera fidedigna. Serán importantes para
+                mantener nuestra comunicación contigo y concretar los pagos.
+              </p>
+            </div>
+            <div v-for="field in fields" :key="field.key" class="mb-3">
+              <p class="mt-2 mb-1 ml-1">
+                <o-tooltip
+                  v-if="field.key === 'password1'"
+                  label="La contraseña debe comenzar con mayúscula, contener 8 dígitos o más, incluir al menos una minúscula, un número, un símbolo y no contener espacios"
+                  position="right"
+                  multiline
+                >
+                  <i class="mdi mdi-information custom-icon"></i>
+                </o-tooltip>
+                {{ field.label }}
+              </p>
+
+              <o-input
+                v-if="field.type !== 'select'"
+                :id="field.key"
+                v-model="user[field.key]"
+                :type="field.type"
+                expanded
+              />
+
+              <o-select v-else v-model="user[field.key]" expanded>
+                <option v-for="option in field.options" :key="option.value" :value="option.label">
+                  {{ option.label }}
+                </option>
+              </o-select>
+
+              <p v-if="showErrorsAdd && !user[field.key]" class="error-msg">
+                Debes completar este campo
+              </p>
+
+              <p
+                v-if="
+                  showErrorsAdd &&
+                  field.key === 'password2' &&
+                  user.password1 &&
+                  user.password2 &&
+                  user.password1 !== user.password2
+                "
+                class="error-msg"
               >
-                <i class="mdi mdi-information custom-icon"></i>
-              </o-tooltip>
-              {{ field.label }}
-            </p>
-
-            <o-input
-              v-if="field.type !== 'select'"
-              :id="field.key"
-              v-model="user[field.key]"
-              :type="field.type"
-              expanded
-            />
-
-            <o-select v-else v-model="user[field.key]" expanded>
-              <option v-for="option in field.options" :key="option.value" :value="option.label">
-                {{ option.label }}
-              </option>
-            </o-select>
-
-            <p v-if="showErrorsAdd && !user[field.key]" class="error-msg">
-              Debes completar este campo
-            </p>
-
-            <p
-              v-if="
-                showErrorsAdd &&
-                field.key === 'password2' &&
-                user.password1 &&
-                user.password2 &&
-                user.password1 !== user.password2
-              "
-              class="error-msg"
+                Las contraseñas deben ser iguales y con formato válido
+              </p>
+            </div>
+            <o-button
+              class="boton-crear-cuenta"
+              :disabled="isLoading"
+              @click.prevent="createUser()"
             >
-              Las contraseñas deben ser iguales y con formato válido
-            </p>
+              {{ isLoading ? 'Procesando…' : 'Crear cuenta' }}
+            </o-button>
           </div>
-          <o-button class="boton-crear-cuenta" :disabled="isLoading" @click.prevent="">
-            {{ isLoading ? 'Procesando…' : 'Crear cuenta' }}
-          </o-button>
-        </div>
+        </o-collapse>
 
         <o-collapse :open="false" expanded trigger-class="trigger">
           <template #trigger="{ open }">
@@ -147,7 +162,7 @@
             />
             <o-button
               v-if="code === true"
-              class="boton-crear-cuenta"
+              class="boton-confirmar-cuenta"
               :disabled="isLoading"
               @click.prevent="confirmUser"
             >
@@ -175,8 +190,8 @@ export default {
       ok: null,
       isLoading: false,
       tituloMensajeModal: null,
-      isFullPage: false,
-      crearCuenta: false,
+      isFullPage: true,
+      /* crearCuenta: false, */
       fields: userFields,
       user: getDefaultUser(),
       showErrorsAdd: false,
@@ -186,6 +201,7 @@ export default {
       customTextColor: null,
       email: null,
       recoveryEmailInput: null,
+      isCreateUserOpen: false,
     }
   },
   methods: {
@@ -199,6 +215,7 @@ export default {
         const hasEmpty = Object.values(this.user).some((v) => v === '' || v === null)
         if (hasEmpty) {
           this.isLoading = false
+          this.code = false
           this.major = 'Completa todos los campos obligatorios.'
           this.isCardModalActive = true
           this.tituloMensajeModal = 'Importante'
@@ -209,6 +226,7 @@ export default {
         // Validación de coincidencia de contraseñas
         if (this.user.password1 !== this.user.password2) {
           this.isLoading = false
+          this.code = false
           this.isCardModalActive = true
           this.tituloMensajeModal = 'Error'
           this.error = 'Las contraseñas no coinciden.'
@@ -221,6 +239,7 @@ export default {
 
         if (!passwordRegex.test(this.user.password1)) {
           this.isLoading = false
+          this.code = false
           this.isCardModalActive = true
           this.tituloMensajeModal = 'Error'
           this.error =
@@ -236,16 +255,14 @@ export default {
           body,
         )
 
-        // Normaliza el "ok" del backend: admite boolean suelto o { ok: boolean }
-        const okFlag = typeof response.data === 'boolean' ? response.data : !!response.data?.ok
-
-        if (!okFlag) {
-          response.data?.message ||
-            'Las contraseñas no coinciden o la contraseña no cumple el formato.'
+        if (response.data !== true) {
+          const mensaje =
+            'No fue posible crear la cuenta. Si el problema persiste, contáctanos por WhatsApp.'
           this.isLoading = false
+          this.code = false
           this.isCardModalActive = true
           this.tituloMensajeModal = 'Error'
-          this.error = msg // 🔹 llena solo "error"
+          this.error = mensaje
           return
         }
 
@@ -258,14 +275,14 @@ export default {
         this.customBackgroundColor = '#fff'
         this.customTextColor = '#404654'
         this.ok =
-          'Te enviamos un código a tu correo electrónico. Debes ingresarlo acá para confirmar tu cuenta:'
+          'Te enviamos el código a tu correo electrónico. Debes ingresarlo acá para confirmar tu cuenta:'
         this._resetForm() // ahora sí limpia el formulario (y apaga showErrorsAdd)
-        this.createAccount(this.crearCuenta)
+        /* this.createAccount(this.crearCuenta) */
       } catch (error) {
         this.isLoading = false
         this.isCardModalActive = true
         this.tituloMensajeModal = 'Error'
-        this.error = error
+        this.error = error.response.data?.message || 'Error inesperado'
       }
     },
     async recoveryPassword() {
@@ -351,10 +368,13 @@ export default {
 
         if (!okFlag) {
           // Opcional: toma mensaje del backend si existe
-          const msg = response.data?.message || 'El código no es válido'
+          const msg =
+            response.data?.message ||
+            'El código no es válido. Debes ingresar el código enviado a tu correo electrónico'
           this.isLoading = false
+          this.confirmationCode = null
           this.isCardModalActive = true
-          this.tituloMensajeModal = 'Error'
+          this.tituloMensajeModal = 'Importante'
           this.error = msg // Llena solo "error"
           return
         }
@@ -364,15 +384,16 @@ export default {
         this.error = false
         this.isCardModalActive = true
         this.tituloMensajeModal = 'Importante'
-        this.code = true
         this.customBackgroundColor = 'hsl(117, 81%, 34%)'
         this.customTextColor = '#fff'
         this.ok = 'Perfecto! Ya puedes iniciar sesión en nuestro sitio y publicar tu propiedad!'
         this.code = false
         this.confirmationCode = null
         this._resetForm() // ahora sí limpia el formulario (y apaga showErrorsAdd)
+        this.isCreateUserOpen = false
       } catch (error) {
         this.isLoading = false
+        this.confirmationCode = null
         this.isCardModalActive = true
         this.tituloMensajeModal = 'Error'
         this.error = error
@@ -407,9 +428,9 @@ export default {
       this.isCardModalActive = false
       this._resetNotices() // 🔹 limpia ok/error/major
     },
-    createAccount() {
+    /* createAccount() {
       this.crearCuenta = !this.crearCuenta
-    },
+    }, */
     _resetNotices() {
       this.ok = null
       this.error = null
@@ -488,11 +509,32 @@ export default {
     0 8px 16px rgba(0, 0, 0, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.15);
 }
+.boton-crear-nueva-cuenta {
+  margin-top: 20px;
+  padding: 13px;
+  width: 381px;
+  color: white;
+  background-color: #b116febe;
+  font-size: 18px;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
 .boton-crear-cuenta {
   margin-top: 20px;
   padding: 13px;
-  width: 100%;
-  max-width: 500px;
+  width: 340px;
+  color: white;
+  background-color: #b116febe;
+  font-size: 18px;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
+.boton-confirmar-cuenta {
+  margin-top: 20px;
+  padding: 13px;
+  width: 300px;
   color: white;
   background-color: #b116febe;
   font-size: 18px;

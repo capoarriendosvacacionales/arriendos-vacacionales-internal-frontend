@@ -22,4 +22,5 @@ export const userFields = [
   { key: 'bank', label: 'Banco:', type: 'select', options: listBanks },
   { key: 'accountNumber', label: 'Número de cuenta:', type: 'text' },
   { key: 'accountType', label: 'Tipo de cuenta', type: 'select', options: listAccountTypes },
+  { key: 'password', label: 'Password de invitación', type: 'password' },
 ]

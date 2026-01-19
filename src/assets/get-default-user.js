@@ -16,5 +16,6 @@ export function getDefaultUser() {
     bank: '',
     accountNumber: '',
     accountType: '',
+    password: '',
   }
 }
