@@ -79,9 +79,32 @@
                 Las contraseñas deben ser iguales y con formato válido
               </p>
             </div>
+
+            <div class="pt-5">
+              <p class="margin-acuerdos pt-2" style="text-align: center">
+                Lea
+                <a href="/terms.html" target="_blank">aquí</a>
+                los términos y condiciones
+              </p>
+              <o-field
+                class="margin-acuerdos mt-2"
+                variant="info"
+                style="text-align: center; padding-top: 18px"
+              >
+                <o-checkbox
+                  true-value="Yes"
+                  false-value="No"
+                  variant="warning"
+                  v-model="acceptedTerms"
+                >
+                  He leído y acepto los terminos y condiciones de la reserva
+                </o-checkbox>
+              </o-field>
+            </div>
+
             <o-button
               class="boton-crear-cuenta"
-              :disabled="isLoading"
+              :disabled="isLoading || acceptedTerms !== 'Yes'"
               @click.prevent="createUser()"
             >
               {{ isLoading ? 'Procesando…' : 'Crear cuenta' }}
@@ -191,7 +214,6 @@ export default {
       isLoading: false,
       tituloMensajeModal: null,
       isFullPage: true,
-      /* crearCuenta: false, */
       fields: userFields,
       user: getDefaultUser(),
       showErrorsAdd: false,
@@ -202,6 +224,7 @@ export default {
       email: null,
       recoveryEmailInput: null,
       isCreateUserOpen: false,
+      acceptedTerms: 'No',
     }
   },
   methods: {
@@ -277,7 +300,6 @@ export default {
         this.ok =
           'Te enviamos el código a tu correo electrónico. Debes ingresarlo acá para confirmar tu cuenta:'
         this._resetForm() // ahora sí limpia el formulario (y apaga showErrorsAdd)
-        /* this.createAccount(this.crearCuenta) */
       } catch (error) {
         this.isLoading = false
         this.isCardModalActive = true
@@ -428,9 +450,6 @@ export default {
       this.isCardModalActive = false
       this._resetNotices() // 🔹 limpia ok/error/major
     },
-    /* createAccount() {
-      this.crearCuenta = !this.crearCuenta
-    }, */
     _resetNotices() {
       this.ok = null
       this.error = null
@@ -439,6 +458,7 @@ export default {
     _resetForm() {
       this.user = getDefaultUser()
       this.showErrorsAdd = false
+      this.acceptedTerms = false
     },
   },
 }
