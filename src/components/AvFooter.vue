@@ -36,9 +36,6 @@
       </div>
     </div>
     <div class="section-parrafo">
-      <a class="terms pb-3" href="/terms.html" target="_blank"
-        >Términos y condiciones <i class="mdi mdi-open-in-new"></i
-      ></a>
       <p class="parrafo pt-3">© 2024 Todos los derechos reservados.</p>
     </div>
   </div>
