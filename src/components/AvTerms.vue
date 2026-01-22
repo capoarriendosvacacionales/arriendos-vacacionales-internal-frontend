@@ -116,6 +116,11 @@
   </div>
 </template>
 <style scoped>
+html,
+body,
+#app {
+  background: white !important;
+}
 .title-container_arrendador {
   margin: 0 auto;
   margin-top: 25px;
