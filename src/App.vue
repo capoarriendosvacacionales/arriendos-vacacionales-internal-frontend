@@ -5,7 +5,7 @@
     <AvSidebar v-if="!menuState.menuState" />
   </header>
 
-  <main :class="mainClass">
+  <main class="app-background">
     <router-view :key="$route.path"></router-view>
   </main>
 
@@ -20,9 +20,6 @@ import AvFooter from './components/AvFooter.vue'
 import AvSidebar from './components/AvSidebar.vue'
 import { useMenuStateInStore } from '@/stores/store'
 
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-
 export default {
   name: 'App',
   components: {
@@ -32,12 +29,7 @@ export default {
   },
   setup() {
     const menuState = useMenuStateInStore()
-    const route = useRoute()
-
-    const mainClass = computed(() => {
-      return route.meta?.background === 'white' ? 'app-background-white' : 'app-background'
-    })
-    return { menuState, mainClass }
+    return { menuState }
   },
 }
 </script>
@@ -61,15 +53,7 @@ footer {
   flex-shrink: 0;
 }
 
-.app-background-white {
-  flex: 1;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Fondo global */
+/* 🔹 Fondo global */
 .app-background {
   flex: 1;
   background: linear-gradient(to bottom, #00bfff, #87cefa, #ffc400, #ffd700);
