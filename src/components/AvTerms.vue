@@ -116,10 +116,6 @@
   </div>
 </template>
 <style scoped>
-:deep(.app-background) {
-  background: #fff !important;
-  background-attachment: initial !important;
-}
 .title-container_arrendador {
   margin: 0 auto;
   margin-top: 25px;

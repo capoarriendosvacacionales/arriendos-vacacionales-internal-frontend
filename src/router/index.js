@@ -45,8 +45,8 @@ const router = createRouter({
     {
       path: '/terms',
       name: 'terms',
-      component: TermsView,
-      meta: { layout: 'auth' }, // sin header/footer
+      component: AppTerms,
+      meta: { layout: 'default', background: 'white' },
     },
     {
       path: '/reset-password',
