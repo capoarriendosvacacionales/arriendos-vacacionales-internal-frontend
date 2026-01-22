@@ -116,9 +116,9 @@
   </div>
 </template>
 <style scoped>
-html,
-body {
-  background: white !important;
+:deep(.app-background) {
+  background: #fff !important;
+  background-attachment: initial !important;
 }
 .title-container_arrendador {
   margin: 0 auto;
