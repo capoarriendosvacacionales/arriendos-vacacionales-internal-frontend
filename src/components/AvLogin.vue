@@ -83,7 +83,7 @@
             <div class="pt-5">
               <p class="margin-acuerdos pt-2" style="text-align: center">
                 Lea
-                <a href="/terms.html" target="_blank">aquí</a>
+                <a href="/terms" target="_blank">aquí</a>
                 los términos y condiciones
               </p>
               <o-field

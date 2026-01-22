@@ -6,7 +6,7 @@ import PropertiesView from '../views/PropertiesView.vue'
 import NotFoundView from '../views/NotFoundView.vue' // Importa el componente 404
 import HomeView from '../views/HomeView.vue'
 import ResetPasswordView from '../views/ResetPasswordView.vue'
-import Terms from '../components/AppTerms.vue'
+import TermsView from '../views/TermsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,7 +45,8 @@ const router = createRouter({
     {
       path: '/terms',
       name: 'terms',
-      component: Terms,
+      component: TermsView,
+      meta: { layout: 'auth' }, // sin header/footer
     },
     {
       path: '/reset-password',
