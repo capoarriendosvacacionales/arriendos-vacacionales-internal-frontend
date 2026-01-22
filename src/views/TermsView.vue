@@ -12,3 +12,10 @@ export default {
   components: { AvTerms },
 }
 </script>
+<style scoped>
+html,
+body {
+  background: white !important;
+  background-color: white !important;
+}
+</style>

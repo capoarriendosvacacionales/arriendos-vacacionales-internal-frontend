@@ -117,8 +117,7 @@
 </template>
 <style scoped>
 html,
-body,
-#app {
+body {
   background: white !important;
 }
 .title-container_arrendador {
